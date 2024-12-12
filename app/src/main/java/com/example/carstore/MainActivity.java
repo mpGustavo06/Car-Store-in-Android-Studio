@@ -21,5 +21,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        if (!NetworkUtils.isConnected(this))
+        {
+            Toast.makeText(this, "Sem conexão com a internet. O aplicativo não pode ser usado offline.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
     }
 }
