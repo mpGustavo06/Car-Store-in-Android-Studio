@@ -6,12 +6,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     tools:context=".MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="15dp"
+        android:text="Cadastros"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15sp"
+        android:layout_gravity="center_horizontal"
+        android:text="Anuncios"
+        android:textSize="16sp"
+        android:onClick="cadastroAnuncio"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15sp"
+        android:layout_gravity="center_horizontal"
+        android:text="Marcas"
+        android:textSize="16sp"
+        android:onClick="cadastroMarca"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15sp"
+        android:layout_gravity="center_horizontal"
+        android:text="Modelos"
+        android:textSize="16sp"
+        android:onClick="cadastroModelo"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15sp"
+        android:layout_gravity="center_horizontal"
+        android:text="Cidades"
+        android:textSize="16sp"
+        android:onClick="cadastroCidade"
+        />
 
 </LinearLayout>

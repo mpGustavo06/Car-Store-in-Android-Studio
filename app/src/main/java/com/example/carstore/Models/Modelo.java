@@ -48,4 +48,9 @@ public class Modelo implements Serializable {
     public void setMarca(Marca marca) {
         this.marca = marca;
     }
+
+    @Override
+    public String toString() {
+        return  nome + " Marca: " + marca;
+    }
 }

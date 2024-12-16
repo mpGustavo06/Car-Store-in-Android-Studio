@@ -98,4 +98,14 @@ public class Anuncio implements Serializable {
     public void setIdCidade(Long idCidade) {
         this.idCidade = idCidade;
     }
+
+    @Override
+    public String toString() {
+        return  "Modelo: " + modelo +
+                ", Cidade: " + cidade +
+                ", Descricao: " + descricao +
+                ", Valor: " + valor +
+                ", Ano: " + ano +
+                ", Km: " + km;
+    }
 }

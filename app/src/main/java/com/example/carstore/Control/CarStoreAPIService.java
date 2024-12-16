@@ -40,5 +40,5 @@ public interface CarStoreAPIService {
 
     //Anuncios
     @GET("anuncios")
-    Call<List<Anuncio>> buscarAnuncios(@QueryMap Map<String, String> filter);
+    Call<List<Anuncio>> createGetAnuncios();
 }

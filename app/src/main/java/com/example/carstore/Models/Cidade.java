@@ -38,4 +38,9 @@ public class Cidade implements Serializable {
     public void setDdd(String ddd) {
         this.ddd = ddd;
     }
+
+    @Override
+    public String toString() {
+        return nome + ", DDD: " + ddd;
+    }
 }
