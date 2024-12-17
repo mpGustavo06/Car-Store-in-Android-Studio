@@ -16,11 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.carstore.Control.AnunciosAdapter;
 import com.example.carstore.Control.AnunciosDatabaseHelper;
 import com.example.carstore.Control.AnunciosTableDAO;
 import com.example.carstore.Control.CarStoreAPIService;
 import com.example.carstore.Models.Anuncio;
+import com.example.carstore.Models.Modelo;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AnunciosActivity extends AppCompatActivity {
     private SQLiteDatabase database;
     private Cursor cursor;
-    private SimpleCursorAdapter adapter;
+    private AnunciosAdapter adapter;
     private Retrofit retrofit;
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
 
@@ -57,17 +61,20 @@ public class AnunciosActivity extends AppCompatActivity {
             return insets;
         });
 
+        //Inicialização dos componentes do layout
+        list = findViewById(R.id.anunciosList);
+
         //Banco de dados
         AnunciosDatabaseHelper dbHelper = new AnunciosDatabaseHelper(this);
         database = dbHelper.getWritableDatabase();
 
         cursor = database.query("anuncios", new String[] {"_id", "modelo", "cidade", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "modelo");
 
-        adapter =  new SimpleCursorAdapter(this, android.R.layout.simple_list_item_single_choice, cursor, new String[] {"modelo"}, new int[] {android.R.id.text1});
+        adapter =  new AnunciosAdapter(this, cursor, 0);
 
         //Listagem
-        list = findViewById(R.id.anunciosList);
         list.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
@@ -149,7 +156,7 @@ public class AnunciosActivity extends AppCompatActivity {
 
     public void addRegistersDatabase (LinkedList<Anuncio> anuncios)
     {
-        for (int i = 0; i < anuncios.size(); i++)
+         for (int i = 0; i < anuncios.size(); i++)
         {
             Anuncio anuncio = anuncios.get(i);
 
