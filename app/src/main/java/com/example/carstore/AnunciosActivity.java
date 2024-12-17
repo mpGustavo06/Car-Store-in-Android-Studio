@@ -1,5 +1,6 @@
 package com.example.carstore;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -95,7 +96,6 @@ public class AnunciosActivity extends AppCompatActivity {
 
         //Carregar anuncios existentes no servidor
         anunciosDAO = new AnunciosTableDAO(getApplicationContext());
-
         carregarAnunciosServidor();
     }
 
@@ -109,6 +109,13 @@ public class AnunciosActivity extends AppCompatActivity {
 
     }
 
+    public void anunciar(View view)
+    {
+        Intent intent = new Intent(AnunciosActivity.this, AnunciarActivity.class);
+        startActivity(intent);
+    }
+
+    //METODOS MANTER REGISTROS SERVIDOR
     public void carregarAnunciosServidor()
     {
         Call<List<Anuncio>> call = apiService.createGetAnuncios();
@@ -145,9 +152,19 @@ public class AnunciosActivity extends AppCompatActivity {
         for (int i = 0; i < anuncios.size(); i++)
         {
             Anuncio anuncio = anuncios.get(i);
+
             if (anuncio != null && anuncio.getId() != null)
             {
-                anunciosDAO.newRecord(anuncio);
+                long id = anunciosDAO.newRecord(anuncio);
+
+                if (id > 0)
+                {
+                    Log.d("DATABASE", "Registro inserido com sucesso. ID: "+id);
+                }
+                else
+                {
+                    Log.d("DATABASE", "Erro ao inserir. ID: "+id);
+                }
             }
             else
             {
@@ -160,5 +177,13 @@ public class AnunciosActivity extends AppCompatActivity {
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return;
+    }
+
+    public void limparDatabase()
+    {
+        database.execSQL("DELETE FROM anuncios");
+        database.execSQL("DELETE FROM sqlite_sequence WHERE name='anuncios'");
+
+        Log.d("DATABASE", "Registros deletados com sucesso.");
     }
 }

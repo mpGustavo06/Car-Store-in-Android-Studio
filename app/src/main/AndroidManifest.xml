@@ -17,11 +17,12 @@
         android:theme="@style/Theme.CarStore"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".AnunciarActivity"
+            android:exported="false" />
         <activity
             android:name=".AnunciosActivity"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
