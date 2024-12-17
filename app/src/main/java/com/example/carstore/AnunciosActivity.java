@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.example.carstore.Control.AnunciosDatabaseHelper;
+import com.example.carstore.Control.AnunciosTableDAO;
 import com.example.carstore.Control.CarStoreAPIService;
 import com.example.carstore.Models.Anuncio;
 
@@ -37,6 +38,7 @@ public class AnunciosActivity extends AppCompatActivity {
 
     private CarStoreAPIService apiService;
     private LinkedList<Anuncio> anuncios = new LinkedList<>();
+    private AnunciosTableDAO anunciosDAO;
 
     private ListView list;
     int idEditing = -1;
@@ -92,6 +94,8 @@ public class AnunciosActivity extends AppCompatActivity {
         if (apiService == null) { Log.e("Retrofit", "carStoreAPIService não foi inicializado!"); }
 
         //Carregar anuncios existentes no servidor
+        anunciosDAO = new AnunciosTableDAO(getApplicationContext());
+
         carregarAnunciosServidor();
     }
 
@@ -117,6 +121,7 @@ public class AnunciosActivity extends AppCompatActivity {
                 {
                     anuncios.clear();
                     anuncios.addAll(response.body());
+                    addRegistersDatabase(anuncios);
                     adapter.notifyDataSetChanged();
 
                     Log.d("RESPOSTA", anuncios.toString());
@@ -133,6 +138,22 @@ public class AnunciosActivity extends AppCompatActivity {
                 throwable.printStackTrace();
             }
         });
+    }
+
+    public void addRegistersDatabase (LinkedList<Anuncio> anuncios)
+    {
+        for (int i = 0; i < anuncios.size(); i++)
+        {
+            Anuncio anuncio = anuncios.get(i);
+            if (anuncio != null && anuncio.getId() != null)
+            {
+                anunciosDAO.newRecord(anuncio);
+            }
+            else
+            {
+                Log.d("DATABASE", "Erro ao inserir o indice: "+i);
+            }
+        }
     }
 
     //MÉTODOS AUXILIARES

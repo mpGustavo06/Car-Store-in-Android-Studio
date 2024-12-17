@@ -14,7 +14,7 @@ public class AnunciosDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL("CREATE TABLE anuncios (_id integer PRIMARY KEY, " +
-                   "modelo varchar(200), cidade varchar(200), descricao varchar(200), " +
+                   "modelo text, cidade text, descricao text, " +
                    "valor float, ano integer, km integer, idModelo integer, idCidade integer);");
     }
 
