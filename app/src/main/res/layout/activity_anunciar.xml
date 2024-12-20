@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AnunciarActivity">
+    tools:context=".CreateAnuncioActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -42,42 +42,14 @@
             android:textSize="20sp"
             />
 
-        <EditText
+        <Spinner
+            android:id="@+id/spinnerModelo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Civic"
-            android:inputType="text"
             android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextModelo"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
-            android:layout_marginRight="5sp"
-            android:text="Marca: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Honda"
-            android:inputType="text"
-            android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextMarca"
-            />
+            android:minHeight="45sp"
+            android:visibility="visible"
+            android:spinnerMode="dropdown" />
     </LinearLayout>
 
     <LinearLayout
@@ -150,15 +122,14 @@
             android:textSize="20sp"
             />
 
-        <EditText
+        <Spinner
+            android:id="@+id/spinnerCidade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Toledo"
-            android:inputType="text"
             android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextCidade"
-            />
+            android:minHeight="45sp"
+            android:visibility="visible"
+            android:spinnerMode="dropdown" />
     </LinearLayout>
 
     <LinearLayout
@@ -230,6 +201,7 @@
         android:orientation="horizontal" >
 
         <Button
+            android:id="@+id/buttonAnunciar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="70sp"
@@ -239,6 +211,7 @@
             />
 
         <Button
+            android:id="@+id/buttonCancelar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="cancelar"

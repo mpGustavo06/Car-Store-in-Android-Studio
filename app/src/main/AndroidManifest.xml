@@ -18,7 +18,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".AnunciarActivity"
+            android:name=".MarcasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreateAnuncioActivity"
             android:exported="false" />
         <activity
             android:name=".AnunciosActivity"

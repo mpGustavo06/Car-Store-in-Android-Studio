@@ -9,10 +9,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.example.carstore.Utils.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+{
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -38,20 +39,5 @@ public class MainActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(MainActivity.this, AnunciosActivity.class);
         startActivity(intent);
-    }
-
-    public void cadastroMarca(View view)
-    {
-
-    }
-
-    public void cadastroModelo(View view)
-    {
-
-    }
-
-    public void cadastroCidade(View view)
-    {
-
     }
 }

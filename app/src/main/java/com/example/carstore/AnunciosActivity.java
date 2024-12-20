@@ -8,31 +8,31 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import com.example.carstore.Control.AnunciosAdapter;
-import com.example.carstore.Control.AnunciosDatabaseHelper;
+import com.example.carstore.Adapters.AnunciosAdapter;
+import com.example.carstore.Control.CidadesTableDAO;
+import com.example.carstore.Control.MarcasTableDAO;
+import com.example.carstore.Control.ModelosTableDAO;
+import com.example.carstore.Database.DatabaseHelper;
 import com.example.carstore.Control.AnunciosTableDAO;
 import com.example.carstore.Control.CarStoreAPIService;
 import com.example.carstore.Models.Anuncio;
+import com.example.carstore.Models.Cidade;
+import com.example.carstore.Models.Marca;
 import com.example.carstore.Models.Modelo;
+import com.example.carstore.Utils.RetrofitUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AnunciosActivity extends AppCompatActivity {
     private SQLiteDatabase database;
@@ -42,7 +42,14 @@ public class AnunciosActivity extends AppCompatActivity {
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
 
     private CarStoreAPIService apiService;
+    private LinkedList<Modelo> modelos = new LinkedList<>();
+    private LinkedList<Cidade> cidades = new LinkedList<>();
+    private LinkedList<Marca> marcas = new LinkedList<>();
     private LinkedList<Anuncio> anuncios = new LinkedList<>();
+
+    private ModelosTableDAO modelosDAO;
+    private CidadesTableDAO cidadesDAO;
+    private MarcasTableDAO marcasDAO;
     private AnunciosTableDAO anunciosDAO;
 
     private ListView list;
@@ -65,10 +72,10 @@ public class AnunciosActivity extends AppCompatActivity {
         list = findViewById(R.id.anunciosList);
 
         //Banco de dados
-        AnunciosDatabaseHelper dbHelper = new AnunciosDatabaseHelper(this);
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
         database = dbHelper.getWritableDatabase();
 
-        cursor = database.query("anuncios", new String[] {"_id", "modelo", "cidade", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "modelo");
+        cursor = database.query("anuncios", new String[] {"_id", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "ano");
 
         adapter =  new AnunciosAdapter(this, cursor, 0);
 
@@ -91,19 +98,23 @@ public class AnunciosActivity extends AppCompatActivity {
             }
         });
 
-        //Criação do Retrofit
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        apiService = retrofit.create(CarStoreAPIService.class);
+        RetrofitUtils.getInstance(BASE_URL);
+        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
 
         if (apiService == null) { Log.e("Retrofit", "carStoreAPIService não foi inicializado!"); }
 
-        //Carregar anuncios existentes no servidor
+        //Carregar registros existentes no servidor
         anunciosDAO = new AnunciosTableDAO(getApplicationContext());
         carregarAnunciosServidor();
+
+        modelosDAO = new ModelosTableDAO(getApplicationContext());
+        modelosDAO.carregarModelosServidor();
+
+        cidadesDAO = new CidadesTableDAO(getApplicationContext());
+        cidadesDAO.carregarCidadesServidor();
+
+        marcasDAO = new MarcasTableDAO(getApplicationContext());
+        marcasDAO.carregarMarcasServidor();
     }
 
     public void onDestroy() {
@@ -118,7 +129,7 @@ public class AnunciosActivity extends AppCompatActivity {
 
     public void anunciar(View view)
     {
-        Intent intent = new Intent(AnunciosActivity.this, AnunciarActivity.class);
+        Intent intent = new Intent(AnunciosActivity.this, CreateAnuncioActivity.class);
         startActivity(intent);
     }
 
@@ -135,10 +146,10 @@ public class AnunciosActivity extends AppCompatActivity {
                 {
                     anuncios.clear();
                     anuncios.addAll(response.body());
-                    addRegistersDatabase(anuncios);
+                    addAnunciosInDatabase(anuncios);
                     adapter.notifyDataSetChanged();
 
-                    Log.d("RESPOSTA", anuncios.toString());
+                    Log.d("RES.TB.ANUNCIOS", anuncios.toString());
                 }
                 else
                 {
@@ -154,9 +165,11 @@ public class AnunciosActivity extends AppCompatActivity {
         });
     }
 
-    public void addRegistersDatabase (LinkedList<Anuncio> anuncios)
+    public void addAnunciosInDatabase(LinkedList<Anuncio> anuncios)
     {
-         for (int i = 0; i < anuncios.size(); i++)
+        limparDatabase("anuncios");
+
+        for (int i = 0; i < anuncios.size(); i++)
         {
             Anuncio anuncio = anuncios.get(i);
 
@@ -166,19 +179,20 @@ public class AnunciosActivity extends AppCompatActivity {
 
                 if (id > 0)
                 {
-                    Log.d("DATABASE", "Registro inserido com sucesso. ID: "+id);
+                    Log.d("TABLE ANUNCIOS", "Registro inserido com sucesso. ID: "+id);
                 }
                 else
                 {
-                    Log.d("DATABASE", "Erro ao inserir. ID: "+id);
+                    Log.d("TABLE ANUNCIOS", "Erro ao inserir. ID: "+id);
                 }
             }
             else
             {
-                Log.d("DATABASE", "Erro ao inserir o indice: "+i);
+                Log.d("TABLE ANUNCIOS", "Erro ao inserir o indice: "+i);
             }
         }
     }
+
 
     //MÉTODOS AUXILIARES
     public void showToast(String msg) {
@@ -186,11 +200,11 @@ public class AnunciosActivity extends AppCompatActivity {
         return;
     }
 
-    public void limparDatabase()
+    public void limparDatabase(String table)
     {
-        database.execSQL("DELETE FROM anuncios");
-        database.execSQL("DELETE FROM sqlite_sequence WHERE name='anuncios'");
+        database.execSQL("DELETE FROM "+table+";");
+        database.execSQL("DELETE FROM sqlite_sequence WHERE name='"+table+"';");
 
-        Log.d("DATABASE", "Registros deletados com sucesso.");
+        Log.d("DB.TB."+table, "Registros deletados com sucesso.");
     }
 }
