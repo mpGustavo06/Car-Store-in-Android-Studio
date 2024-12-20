@@ -1,17 +1,21 @@
 package com.example.carstore.Models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-public class Modelo implements Serializable {
+public class Modelo implements Serializable
+{
     private Long id;
-    private String nome;
-    private Long idMarca;
-    private Marca marca;
 
-    public Modelo(Long id, String nome, Long idMarca, Marca marca) {
+    private String nome;
+    private Marca marca;
+    private String tipo;
+
+    public Modelo(Long id, String nome, Marca marca, String tipo)
+    {
         this.id = id;
         this.nome = nome;
-        this.idMarca = idMarca;
+        this.tipo = tipo;
         this.marca = marca;
     }
 
@@ -33,12 +37,12 @@ public class Modelo implements Serializable {
         this.nome = nome;
     }
 
-    public Long getIdMarca() {
-        return idMarca;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setIdMarca(Long idMarca) {
-        this.idMarca = idMarca;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public Marca getMarca() {
@@ -50,7 +54,17 @@ public class Modelo implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return  nome + " Marca: " + marca;
+    public String toString() { return "ID: " + id + ", Nome: " + nome + ", Tipo: " + tipo; }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Modelo modelo = (Modelo) o;
+        return Objects.equals(id, modelo.id);
     }
+
+    @Override
+    public int hashCode() { return Objects.hashCode(id); }
 }

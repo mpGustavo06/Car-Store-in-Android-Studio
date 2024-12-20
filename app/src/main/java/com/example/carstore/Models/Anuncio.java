@@ -1,28 +1,28 @@
 package com.example.carstore.Models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-public class Anuncio implements Serializable {
+public class Anuncio implements Serializable
+{
     private Long id;
+
     private Modelo modelo;
     private Cidade cidade;
+
     private String descricao;
     private Double valor;
     private Integer ano;
     private Integer km;
-    private Long idModelo;
-    private Long idCidade;
 
-    public Anuncio(Long id, Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km, Long idModelo, Long idCidade) {
+    public Anuncio(Long id, Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km) {
         this.id = id;
-        this.modelo = modelo;
-        this.cidade = cidade;
         this.descricao = descricao;
         this.valor = valor;
         this.ano = ano;
         this.km = km;
-        this.idModelo = idModelo;
-        this.idCidade = idCidade;
+        this.modelo = modelo;
+        this.cidade = cidade;
     }
 
     public Anuncio() { }
@@ -33,22 +33,6 @@ public class Anuncio implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Modelo getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(Modelo modelo) {
-        this.modelo = modelo;
-    }
-
-    public Cidade getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(Cidade cidade) {
-        this.cidade = cidade;
     }
 
     public String getDescricao() {
@@ -83,20 +67,20 @@ public class Anuncio implements Serializable {
         this.km = km;
     }
 
-    public Long getIdModelo() {
-        return idModelo;
+    public Modelo getModelo() {
+        return modelo;
     }
 
-    public void setIdModelo(Long idModelo) {
-        this.idModelo = idModelo;
+    public void setModelo(Modelo modelo) {
+        this.modelo = modelo;
     }
 
-    public Long getIdCidade() {
-        return idCidade;
+    public Cidade getCidade() {
+        return cidade;
     }
 
-    public void setIdCidade(Long idCidade) {
-        this.idCidade = idCidade;
+    public void setCidade(Cidade cidade) {
+        this.cidade = cidade;
     }
 
     @Override
@@ -108,4 +92,16 @@ public class Anuncio implements Serializable {
                 ", Ano: " + ano +
                 ", Km: " + km;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Anuncio anuncio = (Anuncio) o;
+        return Objects.equals(id, anuncio.id);
+    }
+
+    @Override
+    public int hashCode() { return Objects.hashCode(id); }
 }
