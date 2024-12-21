@@ -60,48 +60,14 @@ public class MarcasTableDAO
     {
         LinkedList<Marca> marcas = DatabaseUtils.convert(getMarcasCursor(), getMarcasMapper());
 
-        //Log.d("TB.DAO.MARCAS", marcas.toString());
+        Log.d("DAO.MRC.DBList", "LISTA DE MARCAS: "+marcas.toString());
         return marcas;
     }
 
-    public Marca getMarcaById(SQLiteDatabase db, Long id)
+    public Marca getMarcaById(SQLiteDatabase db, int id)
     {
-        Log.d("TB.DAO.MARCAS", "ID?"+id);
-        // Define a cláusula WHERE e os argumentos
-        String selecao = "_id = ?";
-        String[] argumentos = {String.valueOf(id)};
-
-        // Consulta ao banco de dados
-        Cursor cursor = db.query("marcas", colunas, selecao, argumentos, null, null, null);
-
-        Marca marca = null;
-
-        // Verifica se encontrou um registro
-        if (cursor != null)
-        {
-            try
-            {
-                if (cursor.moveToFirst())
-                {
-                    // Recupera os dados do Cursor
-                    Long idMarca = (long) cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
-                    String nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"));
-
-                    // Cria o objeto Investimento
-                    marca = new Marca(idMarca, nome);
-                }
-            }
-            catch (Exception e)
-            {
-                // Loga o erro caso ocorra uma exceção
-                e.printStackTrace();
-            }
-            finally
-            {
-                // Sempre feche o cursor após o uso
-                cursor.close();
-            }
-        }
+        Marca marca = (Marca) DatabaseUtils.buscarPorId(db, "marcas", "_id", id, getMarcasMapper());
+        //Log.d("DAO.MRC.GetIdMarca", "MARCA: "+marca.toString());
 
         return marca;
     }
@@ -121,34 +87,37 @@ public class MarcasTableDAO
                     marcasList.clear();
                     marcasList.addAll( response.body() );
 
+                    LinkedList<Marca> mrc = getMarcasList();
+
                     for (int i = 0; i < response.body().size(); i++)
                     {
                         Marca marca = response.body().get(i);
 
-                        if (getMarcasList().contains(marca))
+                        if (mrc.contains(marca))
                         {
-                            Log.d("TB.DAO.MARCAS", "Registro existente: "+marca.toString());
+                            //Log.d("DAO.MRC.TWIN", "Registro existente: "+marca.toString());
                         }
                         else if (marca != null && marca.getId() != null)
                         {
                             try
                             {
                                 long id = newRecord(marca);
-                                Log.d("TABLE MARCAS", "Registro inserido com sucesso. ID: "+id);
+                                Log.d("DAO.MRC.INSERT", "Registro inserido com sucesso. ID: "+id);
                             }
                             catch (Exception ex)
                             {
                                 ex.printStackTrace();
-                                Log.d("TABLE MARCAS", "Erro ao inserir. ID: "+marca.getId());
+                                Log.d("DAO.MRC.ERROR", "Erro ao inserir marca: "+marca.toString());
                             }
                         }
                     }
 
-                    Log.d("TB.DAO.MARCAS", "TERMINO DA VERIFICAÇÃO DE MARCAS EXISTENTES. LISTA: "+marcasList.toString());
+                    Log.d("DAO.MRC.END", "TERMINO DA VERIFICAÇÃO DE MARCAS DO SERVIDOR.");
+                    Log.d("DAO.MRC.END.SRVList", "LISTA DE MARCAS: "+marcasList.toString());
                 }
                 else
                 {
-                    Log.d("TB.DAO.MARCAS", "Erro ao procurar por marcas.");
+                    Log.d("DAO.MRC.ERROR", "Erro ao procurar por marcas.");
                 }
             }
 

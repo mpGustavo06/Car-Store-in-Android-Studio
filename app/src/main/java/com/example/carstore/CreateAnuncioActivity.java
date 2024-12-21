@@ -43,9 +43,6 @@ public class CreateAnuncioActivity extends AppCompatActivity {
     private Cidade cidade = new Cidade();
     private CidadesTableDAO cidadesDao;
 
-    private Marca marca = new Marca();
-    private MarcasTableDAO marcasDao;
-
     private EditText editTextAno, editTextKm, editTextDescricao, editTextValor;
     private Button buttonAnunciar, buttonCancelar;
     private Spinner spinnerModelo, spinnerCidade;
@@ -63,6 +60,7 @@ public class CreateAnuncioActivity extends AppCompatActivity {
         });
 
         //Mantendo registros do servidor
+        anunciosDAO = new AnunciosTableDAO(getApplicationContext());
         cidadesDao = new CidadesTableDAO(getApplicationContext());
         modelosDao = new ModelosTableDAO(getApplicationContext());
 
@@ -124,8 +122,8 @@ public class CreateAnuncioActivity extends AppCompatActivity {
                     return;
                 }
 
-                Modelo m = (Modelo) adapterView.getItemAtPosition(position);
-                Log.d("MODELO TESTE: ",m.toString());
+                modelo = (Modelo) adapterView.getItemAtPosition(position);
+                Log.d("SPINNER.MDL.TST: ", "MODELO: "+modelo.toString());
             }
 
             @Override
@@ -145,8 +143,8 @@ public class CreateAnuncioActivity extends AppCompatActivity {
                     return;
                 }
 
-                Cidade c = (Cidade) adapterView.getItemAtPosition(position);
-                Log.d("CIDADE TESTE: ",c.toString());
+                cidade = (Cidade) adapterView.getItemAtPosition(position);
+                Log.d("SPINNER.CDD.TST: ", "CIDADE: "+cidade.toString());
             }
 
             @Override
@@ -156,10 +154,10 @@ public class CreateAnuncioActivity extends AppCompatActivity {
 
     public void novoAnuncio(View view)
     {
-        Log.d("MODELO TESTE NOVO ANUNCIO: ",modelo.toString());
-        Log.d("CIDADE TESTE NOVO ANUNCIO: ",cidade.toString());
+        Log.d("CDD.NEW.ANC.TESTE", "CIDADE: "+cidade.toString());
+        Log.d("MDL.NEW.ANC.TESTE", "MODELO: "+modelo.toString());
+
         anuncio = new Anuncio(
-                null,
                 modelo,
                 cidade,
                 editTextDescricao.getText().toString(),
@@ -167,34 +165,44 @@ public class CreateAnuncioActivity extends AppCompatActivity {
                 Integer.parseInt(editTextAno.getText().toString()),
                 Integer.parseInt(editTextKm.getText().toString()));
 
+        Log.d("NEW.ANC.TESTE", "ANUNCIO: "+anuncio.toString());
+
         long id = anunciosDAO.newRecord(anuncio);
 
         if (id > 0)
         {
             cursor.requery();
             adapter.notifyDataSetChanged();
+            showToast("Registro inserido com sucesso!");
         }
         else
         {
             showToast("Erro na inserção do registro.");
-            showLog("DATABASE", "Erro ao inserir o registro.");
+            Log.d("NEW.ANC.ERROR", "Erro ao inserir o registro.");
         }
+
+        limpar();
     }
 
     public void cancelar(View view)
     {
-
+        limpar();
     }
 
     //MÉTODOS AUXILIARES
+    public void limpar()
+    {
+        editTextAno.setText("");
+        editTextKm.setText("");
+        editTextDescricao.setText("");
+        editTextValor.setText("");
+        spinnerModelo.setSelection(0);
+        spinnerCidade.setSelection(0);
+    }
+
     public void showToast(String msg)
     {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return;
-    }
-
-    public void showLog(String tag, String msg)
-    {
-        Log.d(tag, msg);
     }
 }

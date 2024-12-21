@@ -38,18 +38,10 @@ public class AnunciosActivity extends AppCompatActivity {
     private SQLiteDatabase database;
     private Cursor cursor;
     private AnunciosAdapter adapter;
-    private Retrofit retrofit;
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
 
     private CarStoreAPIService apiService;
-    private LinkedList<Modelo> modelos = new LinkedList<>();
-    private LinkedList<Cidade> cidades = new LinkedList<>();
-    private LinkedList<Marca> marcas = new LinkedList<>();
     private LinkedList<Anuncio> anuncios = new LinkedList<>();
-
-    private ModelosTableDAO modelosDAO;
-    private CidadesTableDAO cidadesDAO;
-    private MarcasTableDAO marcasDAO;
     private AnunciosTableDAO anunciosDAO;
 
     private ListView list;
@@ -75,7 +67,7 @@ public class AnunciosActivity extends AppCompatActivity {
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         database = dbHelper.getWritableDatabase();
 
-        cursor = database.query("anuncios", new String[] {"_id", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "ano");
+        cursor = database.query("anuncios", new String[] {"_id", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "idModelo");
 
         adapter =  new AnunciosAdapter(this, cursor, 0);
 
@@ -103,18 +95,10 @@ public class AnunciosActivity extends AppCompatActivity {
 
         if (apiService == null) { Log.e("Retrofit", "carStoreAPIService não foi inicializado!"); }
 
+
         //Carregar registros existentes no servidor
         anunciosDAO = new AnunciosTableDAO(getApplicationContext());
-        carregarAnunciosServidor();
-
-        modelosDAO = new ModelosTableDAO(getApplicationContext());
-        modelosDAO.carregarModelosServidor();
-
-        cidadesDAO = new CidadesTableDAO(getApplicationContext());
-        cidadesDAO.carregarCidadesServidor();
-
-        marcasDAO = new MarcasTableDAO(getApplicationContext());
-        marcasDAO.carregarMarcasServidor();
+        carregarAnunciosAdapter();
     }
 
     public void onDestroy() {
@@ -133,66 +117,11 @@ public class AnunciosActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //METODOS MANTER REGISTROS SERVIDOR
-    public void carregarAnunciosServidor()
+    public void carregarAnunciosAdapter()
     {
-        Call<List<Anuncio>> call = apiService.createGetAnuncios();
-
-        call.enqueue(new Callback<List<Anuncio>>() {
-            @Override
-            public void onResponse(Call<List<Anuncio>> call, Response<List<Anuncio>> response)
-            {
-                if (response.code() == 200)
-                {
-                    anuncios.clear();
-                    anuncios.addAll(response.body());
-                    addAnunciosInDatabase(anuncios);
-                    adapter.notifyDataSetChanged();
-
-                    Log.d("RES.TB.ANUNCIOS", anuncios.toString());
-                }
-                else
-                {
-                    showToast("Erro na busca. Código: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Anuncio>> call, Throwable throwable)
-            {
-                throwable.printStackTrace();
-            }
-        });
+        anuncios = anunciosDAO.carregarAnunciosServidor();
+        adapter.notifyDataSetChanged();
     }
-
-    public void addAnunciosInDatabase(LinkedList<Anuncio> anuncios)
-    {
-        limparDatabase("anuncios");
-
-        for (int i = 0; i < anuncios.size(); i++)
-        {
-            Anuncio anuncio = anuncios.get(i);
-
-            if (anuncio != null && anuncio.getId() != null)
-            {
-                long id = anunciosDAO.newRecord(anuncio);
-
-                if (id > 0)
-                {
-                    Log.d("TABLE ANUNCIOS", "Registro inserido com sucesso. ID: "+id);
-                }
-                else
-                {
-                    Log.d("TABLE ANUNCIOS", "Erro ao inserir. ID: "+id);
-                }
-            }
-            else
-            {
-                Log.d("TABLE ANUNCIOS", "Erro ao inserir o indice: "+i);
-            }
-        }
-    }
-
 
     //MÉTODOS AUXILIARES
     public void showToast(String msg) {

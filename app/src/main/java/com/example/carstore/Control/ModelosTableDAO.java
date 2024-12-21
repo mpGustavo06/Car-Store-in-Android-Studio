@@ -34,6 +34,7 @@ public class ModelosTableDAO {
     {
         database = new DatabaseHelper(context).getWritableDatabase();
         dbRead = new DatabaseHelper(context).getReadableDatabase();
+        marcasDAO = new MarcasTableDAO(context);
     }
 
     public void close()
@@ -65,15 +66,15 @@ public class ModelosTableDAO {
     public LinkedList<Modelo> getModelosList()
     {
         LinkedList<Modelo> modelos = DatabaseUtils.convert(getModelosCursor(), getModelosMapper());
+        Log.d("DAO.MDL.DBList", "LISTA DE MODELOS: "+modelos.toString());
 
-        //Log.d("TB.DAO.MODELOS", modelos.toString());
         return modelos;
     }
 
-    public Modelo getModeloById(Long id)
+    public Modelo getModeloById(SQLiteDatabase db, int id)
     {
-        Modelo modelo = (Modelo) DatabaseUtils.buscarPorId(database, "modelos", "_id", id, getModelosMapper());
-        Log.d("MODELO.ID.DAO", modelo.toString());
+        Modelo modelo = (Modelo) DatabaseUtils.buscarPorId(db, "modelos", "_id", id, getModelosMapper());
+        Log.d("DAO.MDL.GetModeloId", "MODELO: "+modelo.toString());
 
         return modelo;
     }
@@ -93,34 +94,37 @@ public class ModelosTableDAO {
                     modelosList.clear();
                     modelosList.addAll( response.body() );
 
+                    LinkedList<Modelo> mdl = getModelosList();
+
                     for (int i = 0; i < response.body().size(); i++)
                     {
                         Modelo modelo = response.body().get(i);
 
-                        if (getModelosList().contains(modelo))
+                        if (mdl.contains(modelo))
                         {
-                            Log.d("TB.DAO.MODELOS", "Registro existente: "+modelo.toString());
+                            //Log.d("DAO.MDL.TWIN", "Registro existente: "+modelo.toString());
                         }
                         else if (modelo != null && modelo.getId() != null)
                         {
                             try
                             {
                                 long id = newRecord(modelo);
-                                Log.d("TABLE MODELOS", "Registro inserido com sucesso. ID: "+id);
+                                Log.d("DAO.MDL.INSERT", "Registro inserido com sucesso. ID: "+id);
                             }
                             catch (Exception ex)
                             {
                                 ex.printStackTrace();
-                                Log.d("TABLE MODELOS", "Erro ao inserir. ID: "+modelo.getId());
+                                Log.d("DAO.MDL.ERROR", "Erro ao inserir modelo: "+modelo.toString());
                             }
                         }
                     }
 
-                    Log.d("TB.DAO.MODELOS", "TERMINO DA VERIFICAÇÃO DE MODELOS EXISTENTES. LISTA: "+modelosList.toString());
+                    Log.d("DAO.MDL.END", "TERMINO DA VERIFICAÇÃO DE MODELOS DO SERVIDOR.");
+                    Log.d("DAO.MDL.END.SRVList", "LISTA DE MODELOS: "+modelosList.toString());
                 }
                 else
                 {
-                    Log.d("TB.DAO.MODELOS", "Erro ao procurar por modelos.");
+                    Log.d("DAO.MDL.ERROR", "Erro ao procurar por modelos.");
                 }
             }
 
@@ -148,8 +152,14 @@ public class ModelosTableDAO {
                 Long id = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
                 String nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"));
                 String tipo = cursor.getString(cursor.getColumnIndexOrThrow("tipo"));
-                Long idMarca = cursor.getLong(cursor.getColumnIndexOrThrow("idMarca"));
-                return new Modelo(id, nome, marcasDAO.getMarcaById(dbRead, idMarca), tipo);
+
+                int idMarca = cursor.getInt(cursor.getColumnIndexOrThrow("idMarca"));
+                //Log.d("DAO.MDL.MPP.IdMarca", "IdMarca:"+idMarca);
+
+                Marca marca = marcasDAO.getMarcaById(dbRead, idMarca);
+                //Log.d("DAO.MDL.MPP.GetIdMarca", "MARCA: "+marca.toString());
+
+                return new Modelo(id, nome, marca, tipo);
             }
         };
 

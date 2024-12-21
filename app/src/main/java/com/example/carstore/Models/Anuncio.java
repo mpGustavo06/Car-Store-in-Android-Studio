@@ -15,7 +15,8 @@ public class Anuncio implements Serializable
     private Integer ano;
     private Integer km;
 
-    public Anuncio(Long id, Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km) {
+    public Anuncio(Long id, Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km)
+    {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
@@ -23,6 +24,16 @@ public class Anuncio implements Serializable
         this.km = km;
         this.modelo = modelo;
         this.cidade = cidade;
+    }
+
+    public Anuncio(Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km)
+    {
+        this.modelo = modelo;
+        this.cidade = cidade;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.ano = ano;
+        this.km = km;
     }
 
     public Anuncio() { }

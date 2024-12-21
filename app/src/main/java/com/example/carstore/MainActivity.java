@@ -10,10 +10,17 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.carstore.Control.CidadesTableDAO;
+import com.example.carstore.Control.MarcasTableDAO;
+import com.example.carstore.Control.ModelosTableDAO;
 import com.example.carstore.Utils.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity
 {
+    private CidadesTableDAO cidadesDAO;
+    private MarcasTableDAO marcasDAO;
+    private ModelosTableDAO modelosDAO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -26,6 +33,15 @@ public class MainActivity extends AppCompatActivity
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        cidadesDAO = new CidadesTableDAO(getApplicationContext());
+        cidadesDAO.carregarCidadesServidor();
+
+        marcasDAO = new MarcasTableDAO(getApplicationContext());
+        marcasDAO.carregarMarcasServidor();
+
+        modelosDAO = new ModelosTableDAO(getApplicationContext());
+        modelosDAO.carregarModelosServidor();
 
         //Testando se existe conexão com a internet
         if (!NetworkUtils.isConnected(this))

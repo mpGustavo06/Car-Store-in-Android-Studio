@@ -19,9 +19,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CidadesTableDAO {
+public class CidadesTableDAO
+{
     private SQLiteDatabase database;
     private CarStoreAPIService apiService;
+
     private LinkedList<Cidade> cidadesList = new LinkedList<>();
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "nome", "ddd"};
@@ -31,10 +33,7 @@ public class CidadesTableDAO {
         database = new DatabaseHelper(context).getWritableDatabase();
     }
 
-    public void close()
-    {
-        database.close();
-    }
+    public void close() { database.close(); }
 
     public long newRecord(Cidade cidade)
     {
@@ -60,8 +59,16 @@ public class CidadesTableDAO {
     {
         LinkedList<Cidade> cidades = DatabaseUtils.convert(getCidadesCursor(), getCidadesMapper());
 
-        //Log.d("TB.DAO.CIDADES", cidades.toString());
+        Log.d("DAO.CDD.DBList", "LISTA DE CIDADES: "+cidades.toString());
         return cidades;
+    }
+
+    public Cidade getCidadeById(SQLiteDatabase db, int id)
+    {
+        Cidade cidade = (Cidade) DatabaseUtils.buscarPorId(db, "cidades", "_id", id, getCidadesMapper());
+        Log.d("DAO.CDD.GetIdCidade", "CIDADE: "+cidade.toString());
+
+        return cidade;
     }
 
     public void carregarCidadesServidor()
@@ -79,34 +86,37 @@ public class CidadesTableDAO {
                     cidadesList.clear();
                     cidadesList.addAll( response.body() );
 
+                    LinkedList<Cidade> cdd = getCidadesList();
+
                     for (int i = 0; i < response.body().size(); i++)
                     {
                         Cidade cidade = response.body().get(i);
 
-                        if (getCidadesList().contains(cidade))
+                        if (cdd.contains(cidade))
                         {
-                            Log.d("TB.DAO.CIDADES", "Registro existente: "+cidade.toString());
+                            //Log.d("DAO.CDD.TWIN", "Registro existente: "+cidade.toString());
                         }
                         else if (cidade != null && cidade.getId() != null)
                         {
                             try
                             {
                                 long id = newRecord(cidade);
-                                Log.d("TABLE CIDADES", "Registro inserido com sucesso. ID: "+id);
+                                Log.d("DAO.CDD.INSERT", "Registro inserido com sucesso. ID: "+id);
                             }
                             catch (Exception ex)
                             {
                                 ex.printStackTrace();
-                                Log.d("TABLE CIDADES", "Erro ao inserir. ID: "+cidade.getId());
+                                Log.d("DAO.CDD.ERROR", "Erro ao inserir cidade: "+cidade.toString());
                             }
                         }
                     }
 
-                    Log.d("TB.DAO.CIDADES", "TERMINO DA VERIFICAÇÃO DE CIDADES EXISTENTES. LISTA: "+cidadesList.toString());
+                    Log.d("DAO.CDD.END", "TERMINO DA VERIFICAÇÃO DE CIDADES DO SERVIDOR.");
+                    Log.d("DAO.CDD.END.SRVList", "LISTA DE CIDADES: "+cidadesList.toString());
                 }
                 else
                 {
-                    Log.d("TB.DAO.CIDADES", "Erro ao procurar por cidades.");
+                    Log.d("DAO.CDD.ERROR", "Erro ao procurar por cidades.");
                 }
             }
 

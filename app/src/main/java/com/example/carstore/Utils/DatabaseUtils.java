@@ -31,9 +31,9 @@ public class DatabaseUtils<T>
     }
 
     //Método genérico para buscar um registro pelo ID.
-    public static <T> T buscarPorId(SQLiteDatabase db, String tabela, String idColuna, Long id, CursorMapper<T> mapper) {
+    public static <T> T buscarPorId(SQLiteDatabase db, String tabela, String coluna, int id, CursorMapper<T> mapper) {
         // Cria a cláusula WHERE e os argumentos
-        String selecao = idColuna + " = ?";
+        String selecao = coluna + " = ?";
         String[] argumentos = {String.valueOf(id)};
 
         // Consulta o banco de dados

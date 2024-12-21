@@ -3,9 +3,9 @@ package com.example.carstore.Database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper
+{
     public DatabaseHelper(Context context)
     {
         super(context,"carstore", null, 1 );
