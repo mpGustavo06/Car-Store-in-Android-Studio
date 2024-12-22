@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.carstore.Database.DatabaseHelper;
-import com.example.carstore.Models.Cidade;
 import com.example.carstore.Models.Marca;
 import com.example.carstore.Models.Modelo;
 import com.example.carstore.Utils.DatabaseUtils;
@@ -20,21 +19,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ModelosTableDAO {
+public class ModelosDAO {
     private SQLiteDatabase database;
     private SQLiteDatabase dbRead;
     private CarStoreAPIService apiService;
-    private MarcasTableDAO marcasDAO;
+    private MarcasDAO marcasDAO;
 
     private LinkedList<Modelo> modelosList = new LinkedList<>();
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "nome", "tipo", "idMarca"};
 
-    public ModelosTableDAO(Context context)
+    public ModelosDAO(Context context)
     {
         database = new DatabaseHelper(context).getWritableDatabase();
         dbRead = new DatabaseHelper(context).getReadableDatabase();
-        marcasDAO = new MarcasTableDAO(context);
+        marcasDAO = new MarcasDAO(context);
     }
 
     public void close()
@@ -53,6 +52,44 @@ public class ModelosTableDAO {
         return database.insert("modelos", null, values);
     }
 
+    public void postRecord(Modelo modelo)
+    {
+        try
+        {
+            Log.d("DAO.MDL.POST.TESTE", "Modelo: "+modelo.toString());
+
+            Call<Void> call = apiService.createPostModelo(modelo);
+
+            call.enqueue(new Callback<Void>()
+            {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response)
+                {
+                    if (response.code() == 201) //CREATED
+                    {
+                        Log.d("DAO.MDL.POST", "Modelo inserido com sucesso ao servidor!");
+                    }
+                    else
+                    {
+                        Log.d("DAO.MDL.POST.ERROR", "Erro ao inserir modelo ao servidor!");
+                        Log.d("DAO.MDL.POST.ERROR.SRV", "STATUS: "+response.code());
+                        Log.d("DAO.MDL.POST.ERROR.SRV", "MSG: "+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable throwable)
+                {
+                    throwable.printStackTrace();
+                }
+            });
+        }
+        catch (Throwable ex)
+        {
+            Log.d("DAO.MDL.POST.ERROR.PST", "ERROR: "+ex.getMessage());
+        }
+    }
+
 //    public long updateRecord(Modelo modelo)
 //    {
 //
@@ -63,21 +100,7 @@ public class ModelosTableDAO {
 //
 //    }
 
-    public LinkedList<Modelo> getModelosList()
-    {
-        LinkedList<Modelo> modelos = DatabaseUtils.convert(getModelosCursor(), getModelosMapper());
-        Log.d("DAO.MDL.DBList", "LISTA DE MODELOS: "+modelos.toString());
 
-        return modelos;
-    }
-
-    public Modelo getModeloById(SQLiteDatabase db, int id)
-    {
-        Modelo modelo = (Modelo) DatabaseUtils.buscarPorId(db, "modelos", "_id", id, getModelosMapper());
-        Log.d("DAO.MDL.GetModeloId", "MODELO: "+modelo.toString());
-
-        return modelo;
-    }
 
     public void carregarModelosServidor()
     {
@@ -94,7 +117,7 @@ public class ModelosTableDAO {
                     modelosList.clear();
                     modelosList.addAll( response.body() );
 
-                    LinkedList<Modelo> mdl = getModelosList();
+                    LinkedList<Modelo> mdl = getModelosDBList();
 
                     for (int i = 0; i < response.body().size(); i++)
                     {
@@ -129,11 +152,24 @@ public class ModelosTableDAO {
             }
 
             @Override
-            public void onFailure(Call<List<Modelo>> call, Throwable throwable)
-            {
-                throwable.printStackTrace();
-            }
+            public void onFailure(Call<List<Modelo>> call, Throwable throwable) { throwable.printStackTrace(); }
         });
+    }
+
+    public LinkedList<Modelo> getModelosDBList()
+    {
+        LinkedList<Modelo> modelos = DatabaseUtils.convert(getModelosCursor(), getModelosMapper());
+        Log.d("DAO.MDL.DBList", "LISTA DE MODELOS: "+modelos.toString());
+
+        return modelos;
+    }
+
+    public Modelo getModeloDBById(SQLiteDatabase db, int id)
+    {
+        Modelo modelo = (Modelo) DatabaseUtils.buscarPorId(db, "modelos", "_id", id, getModelosMapper());
+        Log.d("DAO.MDL.GetModeloId", "MODELO: "+modelo.toString());
+
+        return modelo;
     }
 
     public Cursor getModelosCursor()
@@ -156,7 +192,7 @@ public class ModelosTableDAO {
                 int idMarca = cursor.getInt(cursor.getColumnIndexOrThrow("idMarca"));
                 //Log.d("DAO.MDL.MPP.IdMarca", "IdMarca:"+idMarca);
 
-                Marca marca = marcasDAO.getMarcaById(dbRead, idMarca);
+                Marca marca = marcasDAO.getMarcaDBById(dbRead, idMarca);
                 //Log.d("DAO.MDL.MPP.GetIdMarca", "MARCA: "+marca.toString());
 
                 return new Modelo(id, nome, marca, tipo);

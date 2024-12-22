@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.example.carstore.Database.DatabaseHelper;
 import com.example.carstore.Models.Cidade;
-import com.example.carstore.Models.Marca;
 import com.example.carstore.Utils.DatabaseUtils;
 import com.example.carstore.Utils.RetrofitUtils;
 
@@ -19,7 +18,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CidadesTableDAO
+public class CidadesDAO
 {
     private SQLiteDatabase database;
     private CarStoreAPIService apiService;
@@ -28,9 +27,12 @@ public class CidadesTableDAO
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "nome", "ddd"};
 
-    public CidadesTableDAO(Context context)
+    public CidadesDAO(Context context)
     {
         database = new DatabaseHelper(context).getWritableDatabase();
+
+        RetrofitUtils.getInstance(BASE_URL);
+        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
     }
 
     public void close() { database.close(); }
@@ -44,6 +46,44 @@ public class CidadesTableDAO
 
         return database.insert("cidades", null, values);
     }
+
+    public void postRecord(Cidade cidade)
+    {
+        try
+        {
+            Log.d("DAO.CDD.POST.TESTE", "Cidade: "+cidade.toString());
+
+            Call<Void> call = apiService.createPostCidade(cidade);
+
+            call.enqueue(new Callback<Void>()
+            {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response)
+                {
+                    if (response.code() == 201) //CREATED
+                    {
+                        Log.d("DAO.CDD.POST", "Cidade inserida com sucesso ao servidor!");
+                    }
+                    else
+                    {
+                        Log.d("DAO.CDD.POST.ERROR", "Erro ao inserir cidade ao servidor!");
+                        Log.d("DAO.CDD.POST.ERROR.SRV", "STATUS: "+response.code());
+                        Log.d("DAO.CDD.POST.ERROR.SRV", "MSG: "+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable throwable)
+                {
+                    throwable.printStackTrace();
+                }
+            });
+        }
+        catch (Throwable ex)
+        {
+            Log.d("DAO.CDD.POST.ERROR.PST", "ERROR: "+ex.getMessage());
+        }
+    }
 //
 //    public long updateRecord(Cidade cidade)
 //    {
@@ -55,27 +95,10 @@ public class CidadesTableDAO
 //
 //    }
 
-    public LinkedList<Cidade> getCidadesList()
-    {
-        LinkedList<Cidade> cidades = DatabaseUtils.convert(getCidadesCursor(), getCidadesMapper());
 
-        Log.d("DAO.CDD.DBList", "LISTA DE CIDADES: "+cidades.toString());
-        return cidades;
-    }
-
-    public Cidade getCidadeById(SQLiteDatabase db, int id)
-    {
-        Cidade cidade = (Cidade) DatabaseUtils.buscarPorId(db, "cidades", "_id", id, getCidadesMapper());
-        Log.d("DAO.CDD.GetIdCidade", "CIDADE: "+cidade.toString());
-
-        return cidade;
-    }
 
     public void carregarCidadesServidor()
     {
-        RetrofitUtils.getInstance(BASE_URL);
-        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
-
         Call<List<Cidade>> call = apiService.createGetCidades();
 
         call.enqueue(new Callback<List<Cidade>>() {
@@ -86,7 +109,7 @@ public class CidadesTableDAO
                     cidadesList.clear();
                     cidadesList.addAll( response.body() );
 
-                    LinkedList<Cidade> cdd = getCidadesList();
+                    LinkedList<Cidade> cdd = getCidadesDBList();
 
                     for (int i = 0; i < response.body().size(); i++)
                     {
@@ -126,6 +149,22 @@ public class CidadesTableDAO
                 throwable.printStackTrace();
             }
         });
+    }
+
+    public LinkedList<Cidade> getCidadesDBList()
+    {
+        LinkedList<Cidade> cidades = DatabaseUtils.convert(getCidadesCursor(), getCidadesMapper());
+
+        Log.d("DAO.CDD.DBList", "LISTA DE CIDADES: "+cidades.toString());
+        return cidades;
+    }
+
+    public Cidade getCidadeDBById(SQLiteDatabase db, int id)
+    {
+        Cidade cidade = (Cidade) DatabaseUtils.buscarPorId(db, "cidades", "_id", id, getCidadesMapper());
+        Log.d("DAO.CDD.GetIdCidade", "CIDADE: "+cidade.toString());
+
+        return cidade;
     }
 
     public Cursor getCidadesCursor()

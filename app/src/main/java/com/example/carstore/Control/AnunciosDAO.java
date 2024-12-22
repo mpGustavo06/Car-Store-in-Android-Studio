@@ -6,10 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.carstore.AnunciosActivity;
 import com.example.carstore.Database.DatabaseHelper;
 import com.example.carstore.Models.Anuncio;
 import com.example.carstore.Models.Cidade;
-import com.example.carstore.Models.Marca;
 import com.example.carstore.Models.Modelo;
 import com.example.carstore.Utils.DatabaseUtils;
 import com.example.carstore.Utils.RetrofitUtils;
@@ -20,25 +20,30 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
-public class AnunciosTableDAO {
+public class AnunciosDAO {
     private SQLiteDatabase database;
     private SQLiteDatabase dbRead;
     private CarStoreAPIService apiService;
 
-    private ModelosTableDAO modelosDAO;
-    private CidadesTableDAO cidadesDAO;
+    private ModelosDAO modelosDAO;
+    private CidadesDAO cidadesDAO;
 
     private LinkedList<Anuncio> anunciosList = new LinkedList<>();
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "descricao", "valor", "ano", "km", "idModelo", "idCidade"};
 
-    public AnunciosTableDAO(Context context)
+    public AnunciosDAO(Context context)
     {
         database = new DatabaseHelper(context).getWritableDatabase();
         dbRead = new DatabaseHelper(context).getReadableDatabase();
-        modelosDAO = new ModelosTableDAO(context);
-        cidadesDAO = new CidadesTableDAO(context);
+
+        modelosDAO = new ModelosDAO(context);
+        cidadesDAO = new CidadesDAO(context);
+
+        Retrofit retrofit = RetrofitUtils.getInstance(BASE_URL);
+        apiService = retrofit.create(CarStoreAPIService.class);
     }
 
     public void close()
@@ -59,6 +64,45 @@ public class AnunciosTableDAO {
 
         return database.insert("anuncios", null, values);
     }
+
+    public void postRecord (Anuncio anuncio)
+    {
+        try
+        {
+            Log.d("DAO.ANC.POST.TESTE", "Anuncio: "+anuncio.toString());
+
+            Call<Void> call = apiService.createPostAnuncio(anuncio);
+
+            call.enqueue(new Callback<Void>()
+            {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response)
+                {
+                    if (response.code() == 201) //CREATED
+                    {
+                        Log.d("DAO.ANC.POST", "Anuncio inserido com sucesso ao servidor!");
+                    }
+                    else
+                    {
+                        Log.d("DAO.ANC.POST.ERROR", "Erro ao inserir anuncio ao servidor!");
+                        Log.d("DAO.ANC.POST.ERROR.SRV", "STATUS: "+response.code());
+                        Log.d("DAO.ANC.POST.ERROR.SRV", "MSG: "+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable throwable)
+                {
+                    throwable.printStackTrace();
+                }
+            });
+        }
+        catch (Throwable ex)
+        {
+            Log.d("DAO.ANC.POST.ERROR", "Erro ao inserir anuncio ao servidor!");
+            Log.d("DAO.ANC.POST.ERROR.PST", "ERROR: "+ex.getMessage());
+        }
+    }
 //
 //    public long updateRecord(Anuncio anuncio)
 //    {
@@ -70,19 +114,8 @@ public class AnunciosTableDAO {
 //
 //    }
 
-    public LinkedList<Anuncio> getAnunciosList()
+    public void carregarAnunciosServidor()
     {
-        LinkedList<Anuncio> anuncios = DatabaseUtils.convert(getAnunciosCursor(), getAnunciosMapper());
-        Log.d("DAO.ANC.DBList", "LISTA DE ANUNCIOS: "+anuncios.toString());
-
-        return anuncios;
-    }
-
-    public LinkedList<Anuncio> carregarAnunciosServidor()
-    {
-        RetrofitUtils.getInstance(BASE_URL);
-        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
-
         Call<List<Anuncio>> call = apiService.createGetAnuncios();
 
         call.enqueue(new Callback<List<Anuncio>>() {
@@ -93,7 +126,7 @@ public class AnunciosTableDAO {
                     anunciosList.clear();
                     anunciosList.addAll( response.body() );
 
-                    LinkedList<Anuncio> anc = getAnunciosList();
+                    LinkedList<Anuncio> anc = getAnunciosDBList();
 
                     for (int i = 0; i < response.body().size(); i++)
                     {
@@ -128,13 +161,16 @@ public class AnunciosTableDAO {
             }
 
             @Override
-            public void onFailure(Call<List<Anuncio>> call, Throwable throwable)
-            {
-                throwable.printStackTrace();
-            }
+            public void onFailure(Call<List<Anuncio>> call, Throwable throwable) { throwable.printStackTrace(); }
         });
+    }
 
-        return getAnunciosList();
+    public LinkedList<Anuncio> getAnunciosDBList()
+    {
+        LinkedList<Anuncio> anuncios = DatabaseUtils.convert(getAnunciosCursor(), getAnunciosMapper());
+        Log.d("DAO.ANC.DBList", "LISTA DE ANUNCIOS: "+anuncios.toString());
+
+        return anuncios;
     }
 
     public Cursor getAnunciosCursor()
@@ -159,13 +195,13 @@ public class AnunciosTableDAO {
                 int idModelo = cursor.getInt(cursor.getColumnIndexOrThrow("idModelo"));
                 //Log.d("DAO.ANC.MPP.IdModelo", "IdModelo: "+idModelo);
 
-                Modelo modelo = modelosDAO.getModeloById(dbRead, idModelo);
+                Modelo modelo = modelosDAO.getModeloDBById(dbRead, idModelo);
                 Log.d("DAO.ANC.MPP.GetIdModelo", "MODELO: "+modelo.toString());
 
                 int idCidade = cursor.getInt(cursor.getColumnIndexOrThrow("idCidade"));
                 //Log.d("DAO.ANC.MPP.IdCidade", "IdCidade: "+idCidade);
 
-                Cidade cidade = cidadesDAO.getCidadeById(dbRead, idCidade);
+                Cidade cidade = cidadesDAO.getCidadeDBById(dbRead, idCidade);
                 Log.d("DAO.ANC.MPP.GetIdCidade", "CIDADE: "+cidade.toString());
 
                 return new Anuncio(id, modelo, cidade, descricao, valor, ano, km);

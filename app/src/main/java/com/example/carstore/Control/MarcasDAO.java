@@ -18,7 +18,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MarcasTableDAO
+public class MarcasDAO
 {
     private SQLiteDatabase database;
     private CarStoreAPIService apiService;
@@ -27,7 +27,7 @@ public class MarcasTableDAO
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "nome"};
 
-    public MarcasTableDAO(Context context)
+    public MarcasDAO(Context context)
     {
         database = new DatabaseHelper(context).getWritableDatabase();
     }
@@ -45,6 +45,44 @@ public class MarcasTableDAO
 
         return database.insert("marcas", null, values);
     }
+
+    public void postRecord(Marca marca)
+    {
+        try
+        {
+            Log.d("DAO.MRC.POST.TESTE", "Marca: "+marca.toString());
+
+            Call<Void> call = apiService.createPostMarca(marca);
+
+            call.enqueue(new Callback<Void>()
+            {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response)
+                {
+                    if (response.code() == 201) //CREATED
+                    {
+                        Log.d("DAO.MRC.POST", "Marca inserida com sucesso ao servidor!");
+                    }
+                    else
+                    {
+                        Log.d("DAO.MRC.POST.ERROR", "Erro ao inserir marca ao servidor!");
+                        Log.d("DAO.MRC.POST.ERROR.SRV", "STATUS: "+response.code());
+                        Log.d("DAO.MRC.POST.ERROR.SRV", "MSG: "+response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable throwable)
+                {
+                    throwable.printStackTrace();
+                }
+            });
+        }
+        catch (Throwable ex)
+        {
+            Log.d("DAO.MRC.POST.ERROR.PST", "ERROR: "+ex.getMessage());
+        }
+    }
 //
 //    public long updateRecord(Marca marca)
 //    {
@@ -56,21 +94,6 @@ public class MarcasTableDAO
 //
 //    }
 
-    public LinkedList<Marca> getMarcasList()
-    {
-        LinkedList<Marca> marcas = DatabaseUtils.convert(getMarcasCursor(), getMarcasMapper());
-
-        Log.d("DAO.MRC.DBList", "LISTA DE MARCAS: "+marcas.toString());
-        return marcas;
-    }
-
-    public Marca getMarcaById(SQLiteDatabase db, int id)
-    {
-        Marca marca = (Marca) DatabaseUtils.buscarPorId(db, "marcas", "_id", id, getMarcasMapper());
-        //Log.d("DAO.MRC.GetIdMarca", "MARCA: "+marca.toString());
-
-        return marca;
-    }
 
     public void carregarMarcasServidor()
     {
@@ -87,7 +110,7 @@ public class MarcasTableDAO
                     marcasList.clear();
                     marcasList.addAll( response.body() );
 
-                    LinkedList<Marca> mrc = getMarcasList();
+                    LinkedList<Marca> mrc = getMarcasDBList();
 
                     for (int i = 0; i < response.body().size(); i++)
                     {
@@ -127,6 +150,22 @@ public class MarcasTableDAO
                 throwable.printStackTrace();
             }
         });
+    }
+
+    public LinkedList<Marca> getMarcasDBList()
+    {
+        LinkedList<Marca> marcas = DatabaseUtils.convert(getMarcasCursor(), getMarcasMapper());
+
+        Log.d("DAO.MRC.DBList", "LISTA DE MARCAS: "+marcas.toString());
+        return marcas;
+    }
+
+    public Marca getMarcaDBById(SQLiteDatabase db, int id)
+    {
+        Marca marca = (Marca) DatabaseUtils.buscarPorId(db, "marcas", "_id", id, getMarcasMapper());
+        //Log.d("DAO.MRC.GetIdMarca", "MARCA: "+marca.toString());
+
+        return marca;
     }
 
     public Cursor getMarcasCursor()
