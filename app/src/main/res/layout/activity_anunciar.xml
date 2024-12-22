@@ -26,165 +26,177 @@
         android:layout_marginVertical="16dp"
         />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
+        <TableRow
+            android:layout_marginTop="5sp"
             android:layout_marginRight="5sp"
-            android:text="Modelo: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            android:layout_marginLeft="5sp"
+            android:gravity="center">
 
-        <Spinner
-            android:id="@+id/spinnerModelo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="260sp"
-            android:minHeight="45sp"
-            android:visibility="visible"
-            android:spinnerMode="dropdown" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:gravity="center"
+                android:layout_marginRight="5sp"
+                android:text="Modelo: "
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+            <Spinner
+                android:id="@+id/spinnerModelo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="160sp"
+                android:minHeight="40sp"
+                android:visibility="visible"
+                android:spinnerMode="dropdown" />
+        </TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
+        <TableRow
+            android:layout_marginTop="5sp"
             android:layout_marginRight="5sp"
-            android:text="Ano: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            android:layout_marginLeft="5sp"
+            android:gravity="center">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="2008"
-            android:inputType="number"
-            android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextAno"
-            />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:layout_marginRight="5sp"
+                android:gravity="center"
+                android:text="Ano: "
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="2008"
+                android:inputType="number"
+                android:minWidth="260sp"
+                android:minHeight="0sp"
+                android:id="@+id/editTextAno"
+                />
+        </TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
+        <TableRow
+            android:layout_marginTop="5sp"
             android:layout_marginRight="5sp"
-            android:text="Km: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            android:layout_marginLeft="5sp"
+            android:gravity="center">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="180000"
-            android:inputType="number"
-            android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextKm"
-            />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:layout_marginRight="5sp"
+                android:gravity="center"
+                android:text="Km: "
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="180000"
+                android:inputType="number"
+                android:minWidth="260sp"
+                android:minHeight="0sp"
+                android:id="@+id/editTextKm"
+                />
+        </TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
+        <TableRow
+            android:layout_marginTop="5sp"
             android:layout_marginRight="5sp"
-            android:text="Cidade: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            android:layout_marginLeft="5sp"
+            android:gravity="center">
 
-        <Spinner
-            android:id="@+id/spinnerCidade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="260sp"
-            android:minHeight="45sp"
-            android:visibility="visible"
-            android:spinnerMode="dropdown" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:layout_marginRight="5sp"
+                android:gravity="center"
+                android:text="Cidade: "
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+            <Spinner
+                android:id="@+id/spinnerCidade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:minHeight="40sp"
+                android:visibility="visible"
+                android:spinnerMode="dropdown"
+                />
+        </TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
+        <TableRow
+            android:layout_marginTop="5sp"
             android:layout_marginRight="5sp"
-            android:text="Descrição: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            android:layout_marginLeft="5sp"
+            android:gravity="center">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Pneus em bom estado..."
-            android:inputType="text"
-            android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextDescricao"
-            />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:layout_marginRight="5sp"
+                android:gravity="center"
+                android:text="Descrição: "
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Pneus em bom estado..."
+                android:inputType="text"
+                android:minWidth="260sp"
+                android:minHeight="0sp"
+                android:id="@+id/editTextDescricao"
+                />
+        </TableRow>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="100sp"
+        <TableRow
+            android:layout_marginTop="5sp"
             android:layout_marginRight="5sp"
-            android:text="Valor: "
-            android:textStyle="bold"
-            android:textSize="20sp"
-            />
+            android:layout_marginLeft="5sp"
+            android:gravity="center">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="60000"
-            android:inputType="numberDecimal"
-            android:minWidth="260sp"
-            android:minHeight="0sp"
-            android:id="@+id/editTextValor"
-            />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:layout_marginRight="5sp"
+                android:gravity="center"
+                android:text="Valor: "
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="60000"
+                android:inputType="numberDecimal"
+                android:minWidth="260sp"
+                android:minHeight="0sp"
+                android:id="@+id/editTextValor"
+                />
+        </TableRow>
+    </TableLayout>
 
     <!-- Linha Divisória -->
     <View
@@ -194,17 +206,17 @@
         android:layout_marginVertical="20dp"
         />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <TableRow
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
+        android:layout_marginBottom="15sp"
+        android:gravity="center">
 
         <Button
             android:id="@+id/buttonAnunciar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="70sp"
+            android:layout_marginRight="60sp"
             android:onClick="novoAnuncio"
             android:text="Anunciar"
             android:textSize="16sp"
@@ -218,5 +230,5 @@
             android:text="Cancelar"
             android:textSize="16sp"
             />
-    </LinearLayout>
+    </TableRow>
 </LinearLayout>

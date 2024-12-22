@@ -9,32 +9,171 @@
     android:gravity="center"
     tools:context=".AnunciosActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:layout_marginTop="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginLeft="15sp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="90sp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Ano Inicial: "
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:layout_marginRight="5sp"
+                android:hint="2015"
+                android:inputType="number"
+                android:id="@+id/editTextFilterAnoInicial"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="90sp"
+                android:layout_marginLeft="5sp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Ano Final: "
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="100sp"
+                android:hint="2020"
+                android:inputType="number"
+                android:id="@+id/editTextFilterAnoFinal"
+                />
+        </TableRow>
+
+        <TableRow
+            android:layout_marginTop="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginLeft="15sp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="90sp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Valor Minimo: "
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="90sp"
+                android:layout_marginRight="5sp"
+                android:hint="19500"
+                android:inputType="numberDecimal"
+                android:id="@+id/editTextFilterValorMin"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="90sp"
+                android:layout_marginLeft="5sp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Valor Maximo: "
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="90sp"
+                android:hint="50000"
+                android:inputType="numberDecimal"
+                android:id="@+id/editTextFilterValorMax"
+                />
+        </TableRow>
+    </TableLayout>
+
+    <TableRow
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15sp"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal" >
+        android:layout_marginRight="15sp"
+        android:layout_marginLeft="15sp"
+        android:gravity="center">
 
-        <EditText
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Pesquisar..."
-            android:inputType="text"
-            android:minWidth="240sp"
-            android:minHeight="46sp"
-            android:id="@+id/editTextPesquisar"
+            android:minWidth="70sp"
+            android:minHeight="40sp"
+            android:gravity="center"
+            android:layout_marginRight="5sp"
+            android:text="Modelo: "
+            android:textStyle="bold"
+            android:textSize="18sp"
+            />
+
+        <Spinner
+            android:id="@+id/spinnerFilterModelo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:minWidth="180sp"
+            android:minHeight="40sp"
+            android:visibility="visible"
+            android:spinnerMode="dropdown"
+            />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:layout_marginRight="15sp"
+        android:layout_marginLeft="15sp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnLimpar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30sp"
+            android:onClick="limpar"
+            android:text="Limpar"
+            android:textSize="16sp"
             />
 
         <Button
+            android:id="@+id/btnPesquisar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
+            android:layout_marginLeft="30sp"
             android:onClick="pesquisar"
             android:text="Pesquisar"
             android:textSize="16sp"
             />
-    </LinearLayout>
+
+    </TableRow>
 
     <!-- Linha Divisória -->
     <View
@@ -47,7 +186,7 @@
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10sp">
+        android:layout_marginBottom="10sp">
 
         <TextView
             android:layout_width="match_parent"
@@ -101,13 +240,39 @@
         android:layout_marginVertical="10dp"
         />
 
-    <Button
-        android:layout_width="wrap_content"
+    <TableRow
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:onClick="anunciar"
-        android:text="Anunciar"
-        android:textSize="16sp"
-        />
+        android:layout_marginBottom="15sp"
+        android:gravity="center">
 
+        <Button
+            android:id="@+id/btnRemover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="remover"
+            android:text="Remover"
+            android:textSize="16sp"
+            />
+
+        <Button
+            android:id="@+id/btnAlterar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:onClick="alterar"
+            android:text="Alterar"
+            android:textSize="16sp"
+            />
+
+        <Button
+            android:id="@+id/btnAnunciar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="anunciar"
+            android:text="Anunciar"
+            android:textSize="16sp"
+            />
+    </TableRow>
 </LinearLayout>

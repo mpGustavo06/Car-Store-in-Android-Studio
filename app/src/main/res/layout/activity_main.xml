@@ -26,7 +26,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Anuncios"
         android:textSize="16sp"
-        android:onClick="cadastroAnuncio"
+        android:onClick="Anuncios"
         />
 
     <Button
@@ -36,7 +36,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Marcas"
         android:textSize="16sp"
-        android:onClick="cadastroMarca"
+        android:onClick="Marcas"
         />
 
     <Button
@@ -46,7 +46,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Modelos"
         android:textSize="16sp"
-        android:onClick="cadastroModelo"
+        android:onClick="Modelos"
         />
 
     <Button
@@ -56,7 +56,7 @@
         android:layout_gravity="center_horizontal"
         android:text="Cidades"
         android:textSize="16sp"
-        android:onClick="cadastroCidade"
+        android:onClick="Cidades"
         />
 
 </LinearLayout>
