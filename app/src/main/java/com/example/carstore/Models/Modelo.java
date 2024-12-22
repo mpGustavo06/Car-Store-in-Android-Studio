@@ -10,6 +10,7 @@ public class Modelo implements Serializable
     private String nome;
     private Marca marca;
     private String tipo;
+    private Long idMarca;
 
     public Modelo(Long id, String nome, Marca marca, String tipo)
     {
@@ -17,6 +18,7 @@ public class Modelo implements Serializable
         this.nome = nome;
         this.tipo = tipo;
         this.marca = marca;
+        this.idMarca = marca.getId();
     }
 
     public Modelo() { }
@@ -53,8 +55,22 @@ public class Modelo implements Serializable
         this.marca = marca;
     }
 
+    public Long getIdMarca() {
+        return idMarca;
+    }
+
+    public void setIdMarca(Long idMarca) {
+        this.idMarca = idMarca;
+    }
+
     @Override
-    public String toString() { return "ID: " + id + ", Nome: " + nome + ", Tipo: " + tipo; }
+    public String toString()
+    {
+        return "ID: " + id +
+                ", Nome: " + nome +
+                ", Marca: " + marca  +
+                ", Tipo: " + tipo;
+    }
 
     @Override
     public boolean equals(Object o)

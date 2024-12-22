@@ -10,16 +10,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.carstore.Control.CidadesTableDAO;
-import com.example.carstore.Control.MarcasTableDAO;
-import com.example.carstore.Control.ModelosTableDAO;
+import com.example.carstore.Control.AnunciosDAO;
+import com.example.carstore.Control.CidadesDAO;
+import com.example.carstore.Control.MarcasDAO;
+import com.example.carstore.Control.ModelosDAO;
 import com.example.carstore.Utils.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity
 {
-    private CidadesTableDAO cidadesDAO;
-    private MarcasTableDAO marcasDAO;
-    private ModelosTableDAO modelosDAO;
+    private AnunciosDAO anunciosDAO;
+    private CidadesDAO cidadesDAO;
+    private MarcasDAO marcasDAO;
+    private ModelosDAO modelosDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,14 +36,18 @@ public class MainActivity extends AppCompatActivity
             return insets;
         });
 
-        cidadesDAO = new CidadesTableDAO(getApplicationContext());
+        //Carregando registros existentes no servidor
+        cidadesDAO = new CidadesDAO(getApplicationContext());
         cidadesDAO.carregarCidadesServidor();
 
-        marcasDAO = new MarcasTableDAO(getApplicationContext());
+        marcasDAO = new MarcasDAO(getApplicationContext());
         marcasDAO.carregarMarcasServidor();
 
-        modelosDAO = new ModelosTableDAO(getApplicationContext());
+        modelosDAO = new ModelosDAO(getApplicationContext());
         modelosDAO.carregarModelosServidor();
+
+        anunciosDAO = new AnunciosDAO(getApplicationContext());
+        anunciosDAO.carregarAnunciosServidor();
 
         //Testando se existe conexão com a internet
         if (!NetworkUtils.isConnected(this))
@@ -51,9 +57,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void cadastroAnuncio(View view)
+    public void Anuncios(View view)
     {
         Intent intent = new Intent(MainActivity.this, AnunciosActivity.class);
         startActivity(intent);
     }
+
+//    public void Marcas(View view)
+//    {
+//        Intent intent = new Intent(MainActivity.this, MarcasActivity.class);
+//        startActivity(intent);
+//    }
+//
+//    public void Modelos(View view)
+//    {
+//        Intent intent = new Intent(MainActivity.this, ModelosActivity.class);
+//        startActivity(intent);
+//    }
+//
+//    public void Cidades(View view)
+//    {
+//        Intent intent = new Intent(MainActivity.this, CidadesActivity.class);
+//        startActivity(intent);
+//    }
 }

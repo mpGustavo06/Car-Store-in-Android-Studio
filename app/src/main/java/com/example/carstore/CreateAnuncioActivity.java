@@ -1,7 +1,5 @@
 package com.example.carstore;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,36 +14,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import com.example.carstore.Adapters.AnunciosAdapter;
-import com.example.carstore.Control.CidadesTableDAO;
-import com.example.carstore.Control.MarcasTableDAO;
-import com.example.carstore.Control.ModelosTableDAO;
-import com.example.carstore.Database.DatabaseHelper;
-import com.example.carstore.Control.AnunciosTableDAO;
+
+import com.example.carstore.Adapters.SpinnerCidadeAdapter;
+import com.example.carstore.Adapters.SpinnerModeloAdapter;
+import com.example.carstore.Control.CidadesDAO;
+import com.example.carstore.Control.ModelosDAO;
+import com.example.carstore.Control.AnunciosDAO;
 import com.example.carstore.Models.Anuncio;
 import com.example.carstore.Models.Cidade;
-import com.example.carstore.Models.Marca;
 import com.example.carstore.Models.Modelo;
 
-public class CreateAnuncioActivity extends AppCompatActivity {
-    private SQLiteDatabase database;
-    private Cursor cursor;
-    private ArrayAdapter<Modelo> adapterModelo;
-    private ArrayAdapter<Cidade> adapterCidade;
-
-    private Anuncio anuncio;
-    private AnunciosAdapter adapter;
-    private AnunciosTableDAO anunciosDAO;
-
-    private Modelo modelo = new Modelo();
-    private ModelosTableDAO modelosDao;
-
-    private Cidade cidade = new Cidade();
-    private CidadesTableDAO cidadesDao;
-
+public class CreateAnuncioActivity extends AppCompatActivity
+{
     private EditText editTextAno, editTextKm, editTextDescricao, editTextValor;
     private Button buttonAnunciar, buttonCancelar;
     private Spinner spinnerModelo, spinnerCidade;
+
+    private Anuncio anuncio;
+    private AnunciosDAO anunciosDAO;
+
+    private Modelo modelo = new Modelo();
+    private SpinnerModeloAdapter spinnerModeloAdapter;
+    private ModelosDAO modelosDao;
+
+    private Cidade cidade = new Cidade();
+    private SpinnerCidadeAdapter spinnerCidadeAdapter;
+    private CidadesDAO cidadesDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +54,9 @@ public class CreateAnuncioActivity extends AppCompatActivity {
         });
 
         //Mantendo registros do servidor
-        anunciosDAO = new AnunciosTableDAO(getApplicationContext());
-        cidadesDao = new CidadesTableDAO(getApplicationContext());
-        modelosDao = new ModelosTableDAO(getApplicationContext());
+        anunciosDAO = new AnunciosDAO(getApplicationContext());
+        cidadesDao = new CidadesDAO(getApplicationContext());
+        modelosDao = new ModelosDAO(getApplicationContext());
 
         //Inicialização dos componentes do layout
         editTextAno = findViewById(R.id.editTextAno);
@@ -76,25 +70,16 @@ public class CreateAnuncioActivity extends AppCompatActivity {
         spinnerModelo = findViewById(R.id.spinnerModelo);
         spinnerCidade = findViewById(R.id.spinnerCidade);
 
-        //Banco de Dados
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        database = dbHelper.getWritableDatabase();
-
-        cursor = database.query("anuncios", new String[] {"_id", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "idModelo");
-
-        adapter =  new AnunciosAdapter(this, cursor, 0);
-
         //Configurando Spinners
-        adapterModelo = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, modelosDao.getModelosList());
-        adapterModelo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerModelo.setAdapter(adapterModelo);
+        spinnerModeloAdapter = new SpinnerModeloAdapter(this, modelosDao.getModelosDBList());
+        spinnerModelo.setAdapter(spinnerModeloAdapter);
 
-        adapterCidade = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, cidadesDao.getCidadesList());
-        adapterCidade.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCidade.setAdapter(adapterCidade);
+        spinnerCidadeAdapter = new SpinnerCidadeAdapter(this, cidadesDao.getCidadesDBList());
+        spinnerCidade.setAdapter(spinnerCidadeAdapter);
 
         //Eventos
-        buttonAnunciar.setOnClickListener(new View.OnClickListener() {
+        buttonAnunciar.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view)
             {
@@ -102,7 +87,8 @@ public class CreateAnuncioActivity extends AppCompatActivity {
             }
         });
 
-        buttonCancelar.setOnClickListener(new View.OnClickListener() {
+        buttonCancelar.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View view)
             {
@@ -110,7 +96,8 @@ public class CreateAnuncioActivity extends AppCompatActivity {
             }
         });
 
-        spinnerModelo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerModelo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
             boolean isFirstSelection = true;
 
             @Override
@@ -123,11 +110,11 @@ public class CreateAnuncioActivity extends AppCompatActivity {
                 }
 
                 modelo = (Modelo) adapterView.getItemAtPosition(position);
-                Log.d("SPINNER.MDL.TST: ", "MODELO: "+modelo.toString());
+                Log.d("SPINNER.MDL.TESTE", "MODELO: "+modelo.toString());
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) { Log.d("MODELO TESTE: ", "Nenhum modelo selecionado."); }
+            public void onNothingSelected(AdapterView<?> adapterView) { Log.d("SPINNER.MDL.ERROR", "Nenhum modelo selecionado."); }
         });
 
         spinnerCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -144,41 +131,40 @@ public class CreateAnuncioActivity extends AppCompatActivity {
                 }
 
                 cidade = (Cidade) adapterView.getItemAtPosition(position);
-                Log.d("SPINNER.CDD.TST: ", "CIDADE: "+cidade.toString());
+                Log.d("SPINNER.CDD.TESTE", "CIDADE: "+cidade.toString());
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) { Log.d("CIDADE TESTE: ", "Nenhuma cidade selecionada."); }
+            public void onNothingSelected(AdapterView<?> adapterView) { Log.d("SPINNER.CDD.ERROR", "Nenhuma cidade selecionada."); }
         });
     }
 
     public void novoAnuncio(View view)
     {
-        Log.d("CDD.NEW.ANC.TESTE", "CIDADE: "+cidade.toString());
-        Log.d("MDL.NEW.ANC.TESTE", "MODELO: "+modelo.toString());
-
         anuncio = new Anuncio(
-                modelo,
-                cidade,
-                editTextDescricao.getText().toString(),
-                Double.parseDouble(editTextValor.getText().toString()),
-                Integer.parseInt(editTextAno.getText().toString()),
-                Integer.parseInt(editTextKm.getText().toString()));
+            modelo,
+            cidade,
+            editTextDescricao.getText().toString(),
+            Double.parseDouble(editTextValor.getText().toString()),
+            Integer.parseInt(editTextAno.getText().toString()),
+            Integer.parseInt(editTextKm.getText().toString()));
 
         Log.d("NEW.ANC.TESTE", "ANUNCIO: "+anuncio.toString());
 
-        long id = anunciosDAO.newRecord(anuncio);
+        long id = 0;
+
+        id = anunciosDAO.newRecord(anuncio);
+        anunciosDAO.postRecord(anuncio);
 
         if (id > 0)
         {
-            cursor.requery();
-            adapter.notifyDataSetChanged();
-            showToast("Registro inserido com sucesso!");
+            showToast("Anuncio criado com sucesso no BANCO DE DADOS!");
+            Log.d("NEW.ANC.INSERT.DB", "Inserido com sucesso.");
         }
         else
         {
-            showToast("Erro na inserção do registro.");
-            Log.d("NEW.ANC.ERROR", "Erro ao inserir o registro.");
+            showToast("Erro ao criar um novo anuncio no BANDO DE DADOS!");
+            Log.d("NEW.ANC.ERROR.DB", "Erro ao inserir o registro.");
         }
 
         limpar();

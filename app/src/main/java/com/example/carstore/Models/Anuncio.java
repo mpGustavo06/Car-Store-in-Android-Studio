@@ -15,6 +15,9 @@ public class Anuncio implements Serializable
     private Integer ano;
     private Integer km;
 
+    private Long idCidade;
+    private Long idModelo;
+
     public Anuncio(Long id, Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km)
     {
         this.id = id;
@@ -24,6 +27,8 @@ public class Anuncio implements Serializable
         this.km = km;
         this.modelo = modelo;
         this.cidade = cidade;
+        this.idModelo = modelo.getId();
+        this.idCidade = cidade.getId();
     }
 
     public Anuncio(Modelo modelo, Cidade cidade, String descricao, Double valor, Integer ano, Integer km)
@@ -34,6 +39,8 @@ public class Anuncio implements Serializable
         this.valor = valor;
         this.ano = ano;
         this.km = km;
+        this.idModelo = modelo.getId();
+        this.idCidade = cidade.getId();
     }
 
     public Anuncio() { }
@@ -94,9 +101,26 @@ public class Anuncio implements Serializable
         this.cidade = cidade;
     }
 
+    public Long getIdModelo() {
+        return idModelo;
+    }
+
+    public void setIdModelo(Long idModelo) {
+        this.idModelo = idModelo;
+    }
+
+    public Long getIdCidade() {
+        return idCidade;
+    }
+
+    public void setIdCidade(Long idCidade) {
+        this.idCidade = idCidade;
+    }
+
     @Override
     public String toString() {
-        return  "Modelo: " + modelo +
+        return  "ID: " + id +
+                ", Modelo: " + modelo +
                 ", Cidade: " + cidade +
                 ", Descricao: " + descricao +
                 ", Valor: " + valor +

@@ -1,50 +1,54 @@
 package com.example.carstore;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.example.carstore.Adapters.AnunciosAdapter;
-import com.example.carstore.Control.CidadesTableDAO;
-import com.example.carstore.Control.MarcasTableDAO;
-import com.example.carstore.Control.ModelosTableDAO;
-import com.example.carstore.Database.DatabaseHelper;
-import com.example.carstore.Control.AnunciosTableDAO;
+import com.example.carstore.Adapters.SpinnerModeloAdapter;
 import com.example.carstore.Control.CarStoreAPIService;
+import com.example.carstore.Control.ModelosDAO;
 import com.example.carstore.Models.Anuncio;
-import com.example.carstore.Models.Cidade;
-import com.example.carstore.Models.Marca;
 import com.example.carstore.Models.Modelo;
 import com.example.carstore.Utils.RetrofitUtils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
-public class AnunciosActivity extends AppCompatActivity {
-    private SQLiteDatabase database;
-    private Cursor cursor;
-    private AnunciosAdapter adapter;
+public class AnunciosActivity extends AppCompatActivity
+{
+    private CarStoreAPIService apiService;
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
 
-    private CarStoreAPIService apiService;
-    private LinkedList<Anuncio> anuncios = new LinkedList<>();
-    private AnunciosTableDAO anunciosDAO;
+    private AnunciosAdapter anunciosAdapter;
+    private ArrayList<Anuncio> anunciosList = new ArrayList<>();
+
+    private Modelo modelo = new Modelo();
+    private ModelosDAO modelosDao;
+    private SpinnerModeloAdapter spinnerModeloAdapter;
 
     private ListView list;
+    private Button buttonPesquisar, buttonAnunciar, buttonLimpar;
+    private EditText edAnoInicial, edAnoFinal, edValorMin, edValorMax;
+    private Spinner spinnerModelo;
+
     int idEditing = -1;
 
     @Override
@@ -60,22 +64,34 @@ public class AnunciosActivity extends AppCompatActivity {
             return insets;
         });
 
+        modelosDao = new ModelosDAO(getApplicationContext());
+
+        RetrofitUtils.getInstance(BASE_URL);
+        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
+
         //Inicialização dos componentes do layout
         list = findViewById(R.id.anunciosList);
+        buttonAnunciar = findViewById(R.id.btnAnunciar);
+        buttonPesquisar = findViewById(R.id.btnPesquisar);
+        buttonLimpar = findViewById(R.id.btnLimpar);
+        edAnoInicial = findViewById(R.id.editTextFilterAnoInicial);
+        edAnoFinal = findViewById(R.id.editTextFilterAnoFinal);
+        edValorMin = findViewById(R.id.editTextFilterValorMin);
+        edValorMax = findViewById(R.id.editTextFilterValorMax);
+        spinnerModelo = findViewById(R.id.spinnerFilterModelo);
 
-        //Banco de dados
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
-        database = dbHelper.getWritableDatabase();
+        //Configurando Spinner
+        spinnerModeloAdapter = new SpinnerModeloAdapter(this, modelosDao.getModelosDBList());
+        spinnerModelo.setAdapter(spinnerModeloAdapter);
 
-        cursor = database.query("anuncios", new String[] {"_id", "descricao", "valor", "ano", "km", "idModelo", "idCidade"}, null, null, null, null, "idModelo");
-
-        adapter =  new AnunciosAdapter(this, cursor, 0);
-
-        //Listagem
-        list.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        //Adapter
+        anunciosAdapter = new AnunciosAdapter(this, anunciosList);
+        list.setAdapter(anunciosAdapter);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
+        getAnunciosServerList();
+
+        //Eventos
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override
@@ -83,32 +99,56 @@ public class AnunciosActivity extends AppCompatActivity {
             {
                 idEditing = (int) id;
 
-                cursor.moveToPosition(position);
-                //editTextPesquisar.setText(cursor.getString(1));
-
                 return false;
             }
         });
 
-        RetrofitUtils.getInstance(BASE_URL);
-        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
+        spinnerModelo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            boolean isFirstSelection = true;
 
-        if (apiService == null) { Log.e("Retrofit", "carStoreAPIService não foi inicializado!"); }
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
+            {
+                if (isFirstSelection)
+                {
+                    isFirstSelection = false;
+                    return;
+                }
 
+                modelo = (Modelo) adapterView.getItemAtPosition(position);
+                Log.d("SPINNER.MDL.TESTE", "MODELO: "+modelo.toString());
+            }
 
-        //Carregar registros existentes no servidor
-        anunciosDAO = new AnunciosTableDAO(getApplicationContext());
-        carregarAnunciosAdapter();
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) { Log.d("SPINNER.MDL.ERROR", "Nenhum modelo selecionado."); }
+        });
+
+        buttonAnunciar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                anunciar(view);
+            }
+        });
+
+        buttonPesquisar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) { pesquisar(view); }
+        });
+
+        buttonLimpar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) { limpar(view); }
+        });
     }
 
-    public void onDestroy() {
-        database.close();
-        super.onDestroy();
-    }
-
-    public void pesquisar(View view)
+    public void onDestroy()
     {
-
+        super.onDestroy();
     }
 
     public void anunciar(View view)
@@ -117,23 +157,132 @@ public class AnunciosActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void carregarAnunciosAdapter()
+    public void remover(View view)
     {
-        anuncios = anunciosDAO.carregarAnunciosServidor();
-        adapter.notifyDataSetChanged();
+//        Call<Void> call = apiService.createDeleteAnuncio();
+    }
+
+    public void alterar(View view)
+    {
+
+    }
+
+    public void pesquisar(View view)
+    {
+        Log.d("ANC.FILTER.TESTE", "ENTROU NO METODO");
+
+        Modelo mdlSpinner = new Modelo();
+        Integer anoInicial = 0;
+        Integer anoFinal = 0;
+        Double valorMin = 0.0;
+        Double valorMax = 0.0;
+
+        try
+        {
+            mdlSpinner = modelo;
+            anoInicial = Integer.valueOf(edAnoInicial.getText().toString());
+            anoFinal = Integer.valueOf(edAnoFinal.getText().toString());
+            valorMin = Double.valueOf(edValorMin.getText().toString());
+            valorMin = Double.valueOf(edValorMax.getText().toString());
+        }
+        catch (Exception ex)
+        {
+            Log.d("FILTER.EXEPTION", "Mensagem: "+ex.getMessage());
+        }
+
+        Call<List<Anuncio>> call = null;
+
+        if (mdlSpinner != null && anoInicial > 0 && anoFinal > 0 && valorMin > 0.0 && valorMax > 0.0) //Filtragem com todos os filtros
+        {
+           call = apiService.createGetAnunciosByFilter(mdlSpinner.getId(), anoInicial, anoFinal, valorMin, valorMax);
+        }
+        else if (mdlSpinner != null && anoInicial <= 0 && anoFinal <= 0 && valorMin <= 0.0 && valorMax <= 0.0) //Filtragem com modelo
+        {
+           call = apiService.createGetAnunciosByModelo(mdlSpinner.getId());
+        }
+        else
+        {
+            showToast("Erro ao realizar a filtragem, verifique os campos.");
+            return;
+        }
+
+        call.enqueue(new Callback<List<Anuncio>>()
+        {
+            @Override
+            public void onResponse(Call<List<Anuncio>> call, Response<List<Anuncio>> response)
+            {
+                Log.d("FILTER.CALL", "Entrou na CALL");
+                Log.d("FILTER.CALL.CODE", "STATUS: "+response.code());
+                Log.d("FILTER.CALL.MESSAGE", "MSG: "+response.message());
+                if (response.code() == 200)
+                {
+                    if (response.body() != null)
+                    {
+                        anunciosList.clear();
+                        anunciosList.addAll(response.body());
+                        anunciosAdapter.notifyDataSetChanged();
+                        Log.d("ANC.FILTER.RESPONSE", "LISTA DE ANUNCIOS: "+anunciosList.toString());
+                    }
+                    else
+                    {
+                        showToast("Não existem anuncios deste veiculo!");
+                        Log.d("ANC.FILTER.RESPONSE.ERROR", "Resposta vazia");
+                        getAnunciosServerList();
+                    }
+                }
+                else
+                {
+                    Log.d("ANC.FILTER.RESPONSE.ERROR", "Erro ao procurar por anuncios");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Anuncio>> call, Throwable throwable) { throwable.printStackTrace(); }
+        });
+    }
+
+    public void limpar(View view)
+    {
+        edAnoInicial.setText("");
+        edAnoFinal.setText("");
+        edValorMin.setText("");
+        edValorMax.setText("");
+        spinnerModelo.setSelection(0);
+
+        getAnunciosServerList();
+    }
+
+    public void getAnunciosServerList()
+    {
+        Call<List<Anuncio>> call = apiService.createGetAnuncios();
+
+        call.enqueue(new Callback<List<Anuncio>>() {
+            @Override
+            public void onResponse(Call<List<Anuncio>> call, Response<List<Anuncio>> response)
+            {
+                if (response.code() == 200)
+                {
+                    anunciosList.clear();
+                    anunciosList.addAll(response.body());
+                    anunciosAdapter.notifyDataSetChanged();
+                    Log.d("ACT.ANC.RESPONSE", "LISTA DE ANUNCIOS: "+anunciosList.toString());
+                }
+                else
+                {
+                    Log.d("ACT.ANC.RESPONSE.ERROR", "Erro ao procurar por anuncios.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Anuncio>> call, Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
     }
 
     //MÉTODOS AUXILIARES
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return;
-    }
-
-    public void limparDatabase(String table)
-    {
-        database.execSQL("DELETE FROM "+table+";");
-        database.execSQL("DELETE FROM sqlite_sequence WHERE name='"+table+"';");
-
-        Log.d("DB.TB."+table, "Registros deletados com sucesso.");
     }
 }

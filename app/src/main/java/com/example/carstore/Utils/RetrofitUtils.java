@@ -10,13 +10,10 @@ public class RetrofitUtils {
     // Método para inicializar o Retrofit
     public static Retrofit getInstance(String baseUrl)
     {
-        if (retrofit == null)
-        {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl) // Base URL da API
-                    .addConverterFactory(GsonConverterFactory.create()) // Conversor para JSON
-                    .build();
-        }
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl) // Base URL da API
+                .addConverterFactory(GsonConverterFactory.create()) // Conversor para JSON
+                .build();
 
         return retrofit;
     }

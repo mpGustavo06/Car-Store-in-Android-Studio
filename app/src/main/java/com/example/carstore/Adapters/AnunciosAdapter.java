@@ -1,54 +1,53 @@
 package com.example.carstore.Adapters;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import com.example.carstore.Control.ModelosTableDAO;
-import com.example.carstore.Database.DatabaseHelper;
-import com.example.carstore.Models.Modelo;
+import com.example.carstore.Models.Anuncio;
 import com.example.carstore.R;
+import java.util.ArrayList;
 
-
-public class AnunciosAdapter extends CursorAdapter
+public class AnunciosAdapter extends ArrayAdapter<Anuncio>
 {
-    private ModelosTableDAO modelosDAO;
-    private SQLiteDatabase dbRead;
+    private Context context;
+    private ArrayList<Anuncio> anuncios;
 
-    public AnunciosAdapter(Context context, Cursor cursor, int flags)
+    public AnunciosAdapter(Context context, ArrayList<Anuncio> anuncios)
     {
-        super(context, cursor, flags);
+        super(context, 0, anuncios);
+        this.context = context;
+        this.anuncios = anuncios;
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup viewGroup)
+    public View getView(int position, View convertView, ViewGroup parent)
     {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        return inflater.inflate(R.layout.item_anuncio, viewGroup, false);
-    }
+        if (convertView == null)
+        {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_anuncio, parent, false);
+        }
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor)
-    {
-        modelosDAO = new ModelosTableDAO(context);
-        dbRead = new DatabaseHelper(context).getReadableDatabase();
+        Anuncio currentItem = anuncios.get(position);
 
-        TextView modelo = view.findViewById(R.id.tv_modelo);
-        TextView ano = view.findViewById(R.id.tv_ano);
-        TextView km = view.findViewById(R.id.tv_km);
-        TextView valor = view.findViewById(R.id.tv_valor);
+        TextView modelo = convertView.findViewById(R.id.tv_modelo);
+        TextView ano = convertView.findViewById(R.id.tv_ano);
+        TextView km = convertView.findViewById(R.id.tv_km);
+        TextView valor = convertView.findViewById(R.id.tv_valor);
 
-        int idModelo = cursor.getInt(cursor.getColumnIndexOrThrow("idModelo"));
-        Modelo mdl = modelosDAO.getModeloById(dbRead, idModelo);
+        String marca = currentItem.getModelo().getMarca().getNome();
+        String mdl = currentItem.getModelo().getNome();
 
-        modelo.setText(mdl.getMarca().getNome()+" "+mdl.getNome());
-        ano.setText(String.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("ano"))));
-        km.setText(String.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("km"))));
-        valor.setText("R$ "+cursor.getString(cursor.getColumnIndexOrThrow("valor")));
+        modelo.setText(String.format("%s %s", marca, mdl));
+        ano.setText(String.valueOf(currentItem.getAno()));
+        km.setText(String.valueOf(currentItem.getKm()));
+        valor.setText("R$ "+String.valueOf(currentItem.getValor()));
+
+        Log.d("ANC.ADP.ITEM.END", "ANUNCIO: "+currentItem.toString());
+
+        return convertView;
     }
 }
