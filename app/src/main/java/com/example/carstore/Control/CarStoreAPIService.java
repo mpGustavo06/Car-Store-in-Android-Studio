@@ -20,7 +20,7 @@ public interface CarStoreAPIService {
     @GET("marcas")
     Call<List<Marca>> createGetMarcas();
 
-    @POST
+    @POST("marcas")
     Call<Void> createPostMarca(@Body Marca marca);
 
     @PUT("marcas/{id}")
@@ -33,7 +33,7 @@ public interface CarStoreAPIService {
     @GET("cidades")
     Call<List<Cidade>> createGetCidades();
 
-    @POST
+    @POST("cidades")
     Call<Void> createPostCidade(@Body Cidade cidade);
 
     @PUT("cidades/{id}")
