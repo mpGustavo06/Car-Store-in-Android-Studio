@@ -44,6 +44,8 @@ public class CidadesDAO
         values.put("nome", cidade.getNome());
         values.put("ddd", cidade.getDdd());
 
+        Log.d("DAO.CDD.INSERT.VALUES", "CIDADE: "+values.toString());
+
         return database.insert("cidades", null, values);
     }
 
@@ -60,15 +62,17 @@ public class CidadesDAO
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    if (response.code() == 201) //CREATED
+                    Log.d("DAO.MDL.POST.CALL", "Entrou na CALL");
+                    Log.d("DAO.MDL.POST.RESP.CODE", "STATUS: "+response.code());
+                    Log.d("DAO.MDL.POST.RESP.MSG", "MSG: "+response.message());
+
+                    if (response.code() == 200) //CREATED
                     {
                         Log.d("DAO.CDD.POST", "Cidade inserida com sucesso ao servidor!");
                     }
                     else
                     {
                         Log.d("DAO.CDD.POST.ERROR", "Erro ao inserir cidade ao servidor!");
-                        Log.d("DAO.CDD.POST.ERROR.SRV", "STATUS: "+response.code());
-                        Log.d("DAO.CDD.POST.ERROR.SRV", "MSG: "+response.message());
                     }
                 }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.carstore.Database.DatabaseHelper;
 import com.example.carstore.Models.Marca;
@@ -18,6 +19,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class ModelosDAO {
     private SQLiteDatabase database;
@@ -33,7 +35,11 @@ public class ModelosDAO {
     {
         database = new DatabaseHelper(context).getWritableDatabase();
         dbRead = new DatabaseHelper(context).getReadableDatabase();
+
         marcasDAO = new MarcasDAO(context);
+
+        Retrofit retrofit = RetrofitUtils.getInstance(BASE_URL);
+        apiService = retrofit.create(CarStoreAPIService.class);
     }
 
     public void close()
@@ -48,6 +54,8 @@ public class ModelosDAO {
         values.put("nome", modelo.getNome());
         values.put("tipo", modelo.getTipo());
         values.put("idMarca", modelo.getMarca().getId());
+
+        Log.d("DAO.MDL.INSERT.VALUES", "MODELO: "+values.toString());
 
         return database.insert("modelos", null, values);
     }
@@ -65,15 +73,17 @@ public class ModelosDAO {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    if (response.code() == 201) //CREATED
+                    Log.d("DAO.MDL.POST.CALL", "Entrou na CALL");
+                    Log.d("DAO.MDL.POST.RESP.CODE", "STATUS: "+response.code());
+                    Log.d("DAO.MDL.POST.RESP.MSG", "MSG: "+response.message());
+
+                    if (response.code() == 200) //CREATED
                     {
                         Log.d("DAO.MDL.POST", "Modelo inserido com sucesso ao servidor!");
                     }
                     else
                     {
                         Log.d("DAO.MDL.POST.ERROR", "Erro ao inserir modelo ao servidor!");
-                        Log.d("DAO.MDL.POST.ERROR.SRV", "STATUS: "+response.code());
-                        Log.d("DAO.MDL.POST.ERROR.SRV", "MSG: "+response.message());
                     }
                 }
 
@@ -99,8 +109,6 @@ public class ModelosDAO {
 //    {
 //
 //    }
-
-
 
     public void carregarModelosServidor()
     {

@@ -11,12 +11,14 @@ import com.example.carstore.Models.Marca;
 import com.example.carstore.Utils.DatabaseUtils;
 import com.example.carstore.Utils.RetrofitUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MarcasDAO
 {
@@ -27,9 +29,14 @@ public class MarcasDAO
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "nome"};
 
+    private LinkedList<Marca> teste = new LinkedList<>();
+
     public MarcasDAO(Context context)
     {
         database = new DatabaseHelper(context).getWritableDatabase();
+
+        Retrofit retrofit = RetrofitUtils.getInstance(BASE_URL);
+        apiService = retrofit.create(CarStoreAPIService.class);
     }
 
     public void close()
@@ -42,6 +49,8 @@ public class MarcasDAO
         ContentValues values = new ContentValues();
         values.put("_id", marca.getId());
         values.put("nome", marca.getNome());
+
+        Log.d("DAO.MRC.INSERT.VALUES", "MARCA: "+values.toString());
 
         return database.insert("marcas", null, values);
     }
@@ -59,15 +68,17 @@ public class MarcasDAO
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    if (response.code() == 201) //CREATED
+                    Log.d("DAO.MDL.POST.CALL", "Entrou na CALL");
+                    Log.d("DAO.MDL.POST.RESP.CODE", "STATUS: "+response.code());
+                    Log.d("DAO.MDL.POST.RESP.MSG", "MSG: "+response.message());
+
+                    if (response.code() == 200) //CREATED
                     {
                         Log.d("DAO.MRC.POST", "Marca inserida com sucesso ao servidor!");
                     }
                     else
                     {
                         Log.d("DAO.MRC.POST.ERROR", "Erro ao inserir marca ao servidor!");
-                        Log.d("DAO.MRC.POST.ERROR.SRV", "STATUS: "+response.code());
-                        Log.d("DAO.MRC.POST.ERROR.SRV", "MSG: "+response.message());
                     }
                 }
 
@@ -93,7 +104,6 @@ public class MarcasDAO
 //    {
 //
 //    }
-
 
     public void carregarMarcasServidor()
     {

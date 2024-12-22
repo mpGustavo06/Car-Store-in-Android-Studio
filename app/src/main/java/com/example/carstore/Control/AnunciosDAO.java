@@ -78,7 +78,7 @@ public class AnunciosDAO {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    if (response.code() == 201) //CREATED
+                    if (response.code() == 200) //CREATED
                     {
                         Log.d("DAO.ANC.POST", "Anuncio inserido com sucesso ao servidor!");
                     }
