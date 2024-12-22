@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -34,8 +33,10 @@ import retrofit2.Response;
 
 public class AnunciosActivity extends AppCompatActivity
 {
-    private CarStoreAPIService apiService;
-    private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
+    private EditText edAnoInicial, edAnoFinal, edValorMin, edValorMax;
+    private ListView anunciosListView;
+    private Button buttonPesquisar, buttonAnunciar, buttonLimpar;
+    private Spinner spinnerModelo;
 
     private AnunciosAdapter anunciosAdapter;
     private ArrayList<Anuncio> anunciosList = new ArrayList<>();
@@ -44,12 +45,9 @@ public class AnunciosActivity extends AppCompatActivity
     private ModelosDAO modelosDao;
     private SpinnerModeloAdapter spinnerModeloAdapter;
 
-    private ListView list;
-    private Button buttonPesquisar, buttonAnunciar, buttonLimpar;
-    private EditText edAnoInicial, edAnoFinal, edValorMin, edValorMax;
-    private Spinner spinnerModelo;
-
     int idEditing = -1;
+    private CarStoreAPIService apiService;
+    private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -64,13 +62,15 @@ public class AnunciosActivity extends AppCompatActivity
             return insets;
         });
 
-        modelosDao = new ModelosDAO(getApplicationContext());
-
+        //Inicialização do Retrofit
         RetrofitUtils.getInstance(BASE_URL);
         apiService = RetrofitUtils.createService(CarStoreAPIService.class);
 
+        //Inicialização de ModeloDAO
+        modelosDao = new ModelosDAO(getApplicationContext());
+
         //Inicialização dos componentes do layout
-        list = findViewById(R.id.anunciosList);
+        anunciosListView = findViewById(R.id.anunciosList);
         buttonAnunciar = findViewById(R.id.btnAnunciar);
         buttonPesquisar = findViewById(R.id.btnPesquisar);
         buttonLimpar = findViewById(R.id.btnLimpar);
@@ -84,15 +84,15 @@ public class AnunciosActivity extends AppCompatActivity
         spinnerModeloAdapter = new SpinnerModeloAdapter(this, modelosDao.getModelosDBList());
         spinnerModelo.setAdapter(spinnerModeloAdapter);
 
-        //Adapter
+        //Adapter & List
         anunciosAdapter = new AnunciosAdapter(this, anunciosList);
-        list.setAdapter(anunciosAdapter);
-        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        anunciosListView.setAdapter(anunciosAdapter);
+        anunciosListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         getAnunciosServerList();
 
         //Eventos
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        anunciosListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
@@ -167,6 +167,17 @@ public class AnunciosActivity extends AppCompatActivity
 
     }
 
+    public void limpar(View view)
+    {
+        edAnoInicial.setText("");
+        edAnoFinal.setText("");
+        edValorMin.setText("");
+        edValorMax.setText("");
+        spinnerModelo.setSelection(0);
+
+        getAnunciosServerList();
+    }
+
     public void pesquisar(View view)
     {
         Log.d("ANC.FILTER.TESTE", "ENTROU NO METODO");
@@ -239,17 +250,6 @@ public class AnunciosActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<List<Anuncio>> call, Throwable throwable) { throwable.printStackTrace(); }
         });
-    }
-
-    public void limpar(View view)
-    {
-        edAnoInicial.setText("");
-        edAnoFinal.setText("");
-        edValorMin.setText("");
-        edValorMax.setText("");
-        spinnerModelo.setSelection(0);
-
-        getAnunciosServerList();
     }
 
     public void getAnunciosServerList()
