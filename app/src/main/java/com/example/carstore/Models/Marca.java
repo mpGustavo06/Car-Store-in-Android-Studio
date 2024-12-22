@@ -15,6 +15,11 @@ public class Marca implements Serializable
         this.nome = nome;
     }
 
+    public Marca(String nome)
+    {
+        this.nome = nome;
+    }
+
     public Marca() { }
 
     public Long getId() {

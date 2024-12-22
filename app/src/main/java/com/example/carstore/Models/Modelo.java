@@ -21,6 +21,14 @@ public class Modelo implements Serializable
         this.idMarca = marca.getId();
     }
 
+    public Modelo(Marca marca, String nome, String tipo)
+    {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.marca = marca;
+        this.idMarca = marca.getId();
+    }
+
     public Modelo() { }
 
     public Long getId() {

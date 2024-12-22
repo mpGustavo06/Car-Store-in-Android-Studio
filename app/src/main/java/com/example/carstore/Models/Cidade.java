@@ -16,6 +16,12 @@ public class Cidade implements Serializable
         this.ddd = ddd;
     }
 
+    public Cidade(String nome, String ddd)
+    {
+        this.nome = nome;
+        this.ddd = ddd;
+    }
+
     public Cidade() { }
 
     public Long getId() {
