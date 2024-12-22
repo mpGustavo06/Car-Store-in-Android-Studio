@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".ModelosActivity">
+
+    <!-- Linha de Cadastro de Modelo -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:layout_marginRight="15sp"
+        android:layout_marginLeft="15sp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="90sp"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Modelo: "
+            />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="100sp"
+            android:layout_marginRight="5sp"
+            android:hint="Voyage"
+            android:inputType="text"
+            android:id="@+id/editTextMdlNome"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minWidth="90sp"
+            android:layout_marginLeft="5sp"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Tipo: "
+            />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="100sp"
+            android:hint="SEDAN"
+            android:inputType="text"
+            android:id="@+id/editTextMdlTipo"
+            />
+    </TableRow>
+
+    <!-- Linha de Cadastro de Marca -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:layout_marginRight="15sp"
+        android:layout_marginLeft="15sp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="70sp"
+            android:minHeight="40sp"
+            android:gravity="center"
+            android:layout_marginRight="5sp"
+            android:text="Marca: "
+            android:textStyle="bold"
+            android:textSize="18sp"
+            />
+
+        <Spinner
+            android:id="@+id/spinnerMdlMarca"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:minWidth="180sp"
+            android:minHeight="40sp"
+            android:visibility="visible"
+            android:spinnerMode="dropdown"
+            />
+
+        <Button
+            android:id="@+id/btnModeloLimpar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="limpar"
+            android:text="Limpar"
+            android:textSize="16sp"
+            />
+    </TableRow>
+
+    <!-- Linha Divisória -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginVertical="16dp"
+        />
+
+    <!-- Cabeçalho da Lista de Modelos  -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Modelo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Marca" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Tipo" />
+    </TableRow>
+
+    <!-- Lista de Modelos -->
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/modelosList"
+        />
+
+    <!-- Linha Divisória -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginVertical="10dp"
+        />
+
+    <!-- Botões Cadastrar, Alterar e Remover -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15sp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnModeloRemover"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="remover"
+            android:text="Remover"
+            android:textSize="16sp"
+            />
+
+        <Button
+            android:id="@+id/btnModeloAlterar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20sp"
+            android:layout_marginLeft="20sp"
+            android:onClick="alterar"
+            android:text="Alterar"
+            android:textSize="16sp"
+            />
+
+        <Button
+            android:id="@+id/btnModeloCadastrar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="cadastrar"
+            android:text="Cadastrar"
+            android:textSize="16sp"
+            />
+    </TableRow>
+</LinearLayout>
