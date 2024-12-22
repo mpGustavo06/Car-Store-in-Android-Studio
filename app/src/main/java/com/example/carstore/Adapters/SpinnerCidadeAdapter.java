@@ -44,7 +44,7 @@ public class SpinnerCidadeAdapter extends ArrayAdapter<Cidade>
         String ddd = currentItem.getDdd();
 
         cidadeView.setText(cidade);
-        dddView.setText(ddd);
+        dddView.setText("( "+ddd+" )");
 
         Log.d("SPINNER.CDD.ITEM.END", "CIDADE: "+currentItem.toString());
 
@@ -63,7 +63,7 @@ public class SpinnerCidadeAdapter extends ArrayAdapter<Cidade>
         TextView dddView = convertView.findViewById(R.id.tvSpinnerDdd);
 
         cidadeView.setText(cidades.get(position).getNome());
-        dddView.setText(cidades.get(position).getDdd());
+        dddView.setText("( "+cidades.get(position).getDdd()+" )");
 
         return convertView;
     }

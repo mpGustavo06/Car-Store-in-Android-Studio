@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import com.example.carstore.Models.Anuncio;
 import com.example.carstore.R;
+
 import java.util.ArrayList;
 
 public class AnunciosAdapter extends ArrayAdapter<Anuncio>
@@ -33,10 +35,10 @@ public class AnunciosAdapter extends ArrayAdapter<Anuncio>
 
         Anuncio currentItem = anuncios.get(position);
 
-        TextView modelo = convertView.findViewById(R.id.tv_modelo);
-        TextView ano = convertView.findViewById(R.id.tv_ano);
-        TextView km = convertView.findViewById(R.id.tv_km);
-        TextView valor = convertView.findViewById(R.id.tv_valor);
+        TextView modelo = convertView.findViewById(R.id.tvAnuncio_modelo);
+        TextView ano = convertView.findViewById(R.id.tvAnuncio_ano);
+        TextView km = convertView.findViewById(R.id.tvAnuncio_km);
+        TextView valor = convertView.findViewById(R.id.tvAnuncio_valor);
 
         String marca = currentItem.getModelo().getMarca().getNome();
         String mdl = currentItem.getModelo().getNome();
