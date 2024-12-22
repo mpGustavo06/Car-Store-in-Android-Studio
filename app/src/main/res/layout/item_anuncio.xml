@@ -10,7 +10,7 @@
         android:layout_margin="10sp">
 
         <TextView
-            android:id="@+id/tv_modelo"
+            android:id="@+id/tvAnuncio_modelo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -19,7 +19,7 @@
             android:text="Modelo" />
 
         <TextView
-            android:id="@+id/tv_ano"
+            android:id="@+id/tvAnuncio_ano"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -28,7 +28,7 @@
             android:text="Ano" />
 
         <TextView
-            android:id="@+id/tv_km"
+            android:id="@+id/tvAnuncio_km"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -37,7 +37,7 @@
             android:text="Km" />
 
         <TextView
-            android:id="@+id/tv_valor"
+            android:id="@+id/tvAnuncio_valor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -14,16 +14,23 @@
             android:id="@+id/tvSpinnerMarca"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:layout_marginRight="5sp"
+            android:textSize="18sp"
             android:text="Marca" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="-" />
 
         <TextView
             android:id="@+id/tvSpinnerModelo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
+            android:layout_marginLeft="5sp"
             android:text="Modelo"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
     </TableRow>
 
     <View

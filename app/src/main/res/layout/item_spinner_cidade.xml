@@ -14,17 +14,23 @@
             android:id="@+id/tvSpinnerCidade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
+            android:layout_marginRight="5sp"
             android:text="Cidade"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvSpinnerDdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
+            android:layout_marginLeft="5sp"
             android:text="Ddd"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
     </TableRow>
 
     <View
