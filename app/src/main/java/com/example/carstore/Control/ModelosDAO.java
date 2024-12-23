@@ -77,7 +77,7 @@ public class ModelosDAO {
                     Log.d("DAO.MDL.POST.RESP.CODE", "STATUS: "+response.code());
                     Log.d("DAO.MDL.POST.RESP.MSG", "MSG: "+response.message());
 
-                    if (response.code() == 200) //CREATED
+                    if (response.code() == 201 || response.code() == 200) //CREATED
                     {
                         Log.d("DAO.MDL.POST", "Modelo inserido com sucesso ao servidor!");
                     }
@@ -100,15 +100,70 @@ public class ModelosDAO {
         }
     }
 
-//    public long updateRecord(Modelo modelo)
-//    {
-//
-//    }
+    public long updateRecord(Long id, Modelo modelo)
+    {
+        //Log.d("DAO.MRC.PUT.IDTest", "ID: "+id);
 
-//    public void deleteRecord(Modelo modelo)
-//    {
-//
-//    }
+        Call<Void> call = apiService.createPutModelo(id, modelo);
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.MDL.PUT.CALL", "Entrou na CALL");
+                Log.d("DAO.MDL.PUT.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.MDL.PUT.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 200) //OK
+                {
+                    Log.d("DAO.MDL.PUT", "Modelo atualizado com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        ContentValues values = new ContentValues();
+        values.put("nome", modelo.getNome());
+        values.put("tipo", modelo.getTipo());
+        values.put("idMarca", modelo.getMarca().getId());
+
+        return database.update("modelos", values, "_id = ?", new String[] {String.valueOf(id)});
+    }
+
+    public void deleteRecord(Modelo modelo)
+    {
+        Call<Void> call = apiService.createDeleteModelo(modelo.getId());
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.MDL.DELETE.CALL", "Entrou na CALL");
+                Log.d("DAO.MDL.DELETE.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.MDL.DELETE.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 204) //DELETED
+                {
+                    Log.d("DAO.MDL.DELETE", "Modelo removida com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        database.delete("modelos", "_id = ?", new String[] {String.valueOf(modelo.getId())});
+    }
 
     public void carregarModelosServidor()
     {

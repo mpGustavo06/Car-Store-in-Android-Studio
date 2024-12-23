@@ -78,15 +78,17 @@ public class AnunciosDAO {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    if (response.code() == 200) //CREATED
+                    Log.d("DAO.ANC.POST.CALL", "Entrou na CALL");
+                    Log.d("DAO.ANC.POST.RESP.CODE", "STATUS: "+response.code());
+                    Log.d("DAO.ANC.POST.RESP.MSG", "MSG: "+response.message());
+
+                    if (response.code() == 201 || response.code() == 200) //CREATED
                     {
                         Log.d("DAO.ANC.POST", "Anuncio inserido com sucesso ao servidor!");
                     }
                     else
                     {
                         Log.d("DAO.ANC.POST.ERROR", "Erro ao inserir anuncio ao servidor!");
-                        Log.d("DAO.ANC.POST.ERROR.SRV", "STATUS: "+response.code());
-                        Log.d("DAO.ANC.POST.ERROR.SRV", "MSG: "+response.message());
                     }
                 }
 
@@ -103,16 +105,72 @@ public class AnunciosDAO {
             Log.d("DAO.ANC.POST.ERROR.PST", "ERROR: "+ex.getMessage());
         }
     }
-//
-//    public long updateRecord(Anuncio anuncio)
-//    {
-//
-//    }
 
-//    public void deleteRecord(Anuncio anuncio)
-//    {
-//
-//    }
+    public long updateRecord(Long id, Anuncio anuncio)
+    {
+        Call<Void> call = apiService.createPutAnuncio(id, anuncio);
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.ANC.PUT.CALL", "Entrou na CALL");
+                Log.d("DAO.ANC.PUT.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.ANC.PUT.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 200) //OK
+                {
+                    Log.d("DAO.ANC.PUT", "Anuncio atualizado com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        ContentValues values = new ContentValues();
+        values.put("descricao", anuncio.getDescricao());
+        values.put("valor", anuncio.getValor());
+        values.put("ano", anuncio.getAno());
+        values.put("km", anuncio.getKm());
+        values.put("idModelo", anuncio.getModelo().getId());
+        values.put("idCidade", anuncio.getCidade().getId());
+
+        return database.update("anuncios", values, "_id = ?", new String[] {String.valueOf(id)});
+    }
+
+    public void deleteRecord(Anuncio anuncio)
+    {
+        Call<Void> call = apiService.createDeleteAnuncio(anuncio.getId());
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.ANC.DELETE.CALL", "Entrou na CALL");
+                Log.d("DAO.ANC.DELETE.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.ANC.DELETE.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 204) //DELETED
+                {
+                    Log.d("DAO.ANC.DELETE", "Anuncio removido com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        database.delete("anuncios", "_id = ?", new String[] {String.valueOf(anuncio.getId())});
+    }
 
     public void carregarAnunciosServidor()
     {

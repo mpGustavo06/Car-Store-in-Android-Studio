@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.carstore.Database.DatabaseHelper;
 import com.example.carstore.Models.Cidade;
@@ -62,11 +63,11 @@ public class CidadesDAO
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    Log.d("DAO.MDL.POST.CALL", "Entrou na CALL");
-                    Log.d("DAO.MDL.POST.RESP.CODE", "STATUS: "+response.code());
-                    Log.d("DAO.MDL.POST.RESP.MSG", "MSG: "+response.message());
+                    Log.d("DAO.CDD.POST.CALL", "Entrou na CALL");
+                    Log.d("DAO.CDD.POST.RESP.CODE", "STATUS: "+response.code());
+                    Log.d("DAO.CDD.POST.RESP.MSG", "MSG: "+response.message());
 
-                    if (response.code() == 200) //CREATED
+                    if (response.code() == 201 || response.code() == 200) //CREATED
                     {
                         Log.d("DAO.CDD.POST", "Cidade inserida com sucesso ao servidor!");
                     }
@@ -88,18 +89,70 @@ public class CidadesDAO
             Log.d("DAO.CDD.POST.ERROR.PST", "ERROR: "+ex.getMessage());
         }
     }
-//
-//    public long updateRecord(Cidade cidade)
-//    {
-//
-//    }
 
-//    public void deleteRecord(Cidade cidade)
-//    {
-//
-//    }
+    public long updateRecord(Long id, Cidade cidade)
+    {
+        //Log.d("DAO.MRC.PUT.IDTest", "ID: "+id);
 
+        Call<Void> call = apiService.createPutCidade(id, cidade);
 
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.CDD.PUT.CALL", "Entrou na CALL");
+                Log.d("DAO.CDD.PUT.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.CDD.PUT.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 200) //OK
+                {
+                    Log.d("DAO.CDD.PUT", "Cidade atualizada com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        ContentValues values = new ContentValues();
+        values.put("nome", cidade.getNome());
+        values.put("ddd", cidade.getDdd());
+
+        return database.update("cidades", values, "_id = ?", new String[] {String.valueOf(id)});
+    }
+
+    public void deleteRecord(Cidade cidade)
+    {
+        Call<Void> call = apiService.createDeleteCidade(cidade.getId());
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.CDD.DELETE.CALL", "Entrou na CALL");
+                Log.d("DAO.CDD.DELETE.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.CDD.DELETE.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 204) //DELETED
+                {
+                    Log.d("DAO.CDD.DELETE", "Cidade removida com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        database.delete("cidades", "_id = ?", new String[] {String.valueOf(cidade.getId())});
+    }
 
     public void carregarCidadesServidor()
     {

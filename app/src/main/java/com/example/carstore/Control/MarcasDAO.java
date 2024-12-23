@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.carstore.Database.DatabaseHelper;
 import com.example.carstore.Models.Marca;
@@ -28,8 +29,6 @@ public class MarcasDAO
     private LinkedList<Marca> marcasList = new LinkedList<>();
     private static final String BASE_URL = "http://argo.td.utfpr.edu.br/carros/ws/";
     private String[] colunas = new String[] {"_id", "nome"};
-
-    private LinkedList<Marca> teste = new LinkedList<>();
 
     public MarcasDAO(Context context)
     {
@@ -68,11 +67,11 @@ public class MarcasDAO
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response)
                 {
-                    Log.d("DAO.MDL.POST.CALL", "Entrou na CALL");
-                    Log.d("DAO.MDL.POST.RESP.CODE", "STATUS: "+response.code());
-                    Log.d("DAO.MDL.POST.RESP.MSG", "MSG: "+response.message());
+                    Log.d("DAO.MRC.POST.CALL", "Entrou na CALL");
+                    Log.d("DAO.MRC.POST.RESP.CODE", "STATUS: "+response.code());
+                    Log.d("DAO.MRC.POST.RESP.MSG", "MSG: "+response.message());
 
-                    if (response.code() == 200) //CREATED
+                    if (response.code() == 201 || response.code() == 200) //CREATED
                     {
                         Log.d("DAO.MRC.POST", "Marca inserida com sucesso ao servidor!");
                     }
@@ -94,22 +93,72 @@ public class MarcasDAO
             Log.d("DAO.MRC.POST.ERROR.PST", "ERROR: "+ex.getMessage());
         }
     }
-//
-//    public long updateRecord(Marca marca)
-//    {
-//
-//    }
 
-//    public void deleteRecord(Marca marca)
-//    {
-//
-//    }
+    public long updateRecord(Long id, Marca marca)
+    {
+        //Log.d("DAO.MRC.PUT.IDTest", "ID: "+id);
+
+        Call<Void> call = apiService.createPutMarca(id, marca);
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.MRC.PUT.CALL", "Entrou na CALL");
+                Log.d("DAO.MRC.PUT.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.MRC.PUT.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 200) //OK
+                {
+                    Log.d("DAO.MRC.PUT", "Marca atualizada com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        ContentValues values = new ContentValues();
+        values.put("nome", marca.getNome());
+
+        return database.update("marcas", values, "_id = ?", new String[] {String.valueOf(id)});
+    }
+
+    public void deleteRecord(Marca marca)
+    {
+        Call<Void> call = apiService.createDeleteMarca(marca.getId());
+
+        call.enqueue(new Callback<Void>()
+        {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response)
+            {
+                Log.d("DAO.MRC.DELETE.CALL", "Entrou na CALL");
+                Log.d("DAO.MRC.DELETE.RESP.CODE", "STATUS: "+response.code());
+                Log.d("DAO.MRC.DELETE.RESP.MSG", "MSG: "+response.message());
+
+                if (response.code() == 204) //DELETED
+                {
+                    Log.d("DAO.MRC.DELETE", "Marca removida com sucesso do servidor!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable)
+            {
+                throwable.printStackTrace();
+            }
+        });
+
+        database.delete("marcas", "_id = ?", new String[] {String.valueOf(marca.getId())});
+    }
 
     public void carregarMarcasServidor()
     {
-        RetrofitUtils.getInstance(BASE_URL);
-        apiService = RetrofitUtils.createService(CarStoreAPIService.class);
-
         Call<List<Marca>> call = apiService.createGetMarcas();
 
         call.enqueue(new Callback<List<Marca>>() {
