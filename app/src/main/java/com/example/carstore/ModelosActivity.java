@@ -42,6 +42,7 @@ public class ModelosActivity extends AppCompatActivity
     private Spinner spinnerMarca;
 
     private Modelo modelo;
+    private Modelo modeloSelected = new Modelo();
     private ModelosDAO modelosDAO;
     private ModelosAdapter modelosAdapter;
     private ArrayList<Modelo> modelosList = new ArrayList<>();
@@ -96,6 +97,19 @@ public class ModelosActivity extends AppCompatActivity
         getModelosServerList();
 
         //Eventos
+        modelosListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+            {
+                view.setActivated(true);
+
+                modeloSelected = (Modelo) adapterView.getItemAtPosition(position);
+
+                Log.d("TESTE", modeloSelected.toString());
+            }
+        });
+
         spinnerMarca.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             boolean isFirstSelection = true;
@@ -156,29 +170,59 @@ public class ModelosActivity extends AppCompatActivity
 
     public void cadastrar(View view)
     {
-        modelo = new Modelo(
-                marca,
-                edNomeModelo.getText().toString(),
-                edTipoModelo.getText().toString()
-        );
-
-        Log.d("NEW.MDL.TESTE", "MODELO: "+modelo.toString());
-
-        long id = modelosDAO.newRecord(modelo);
-        modelosDAO.postRecord(modelo);
-
-        if (id > 0)
+        if (modeloSelected.getId() != null)
         {
-            showToast("Modelo criado com sucesso!");
-            Log.d("NEW.MDL.INSERT.DB", "Inserido com sucesso. ID: "+id);
+            modelo = new Modelo(
+                    modeloSelected.getId(),
+                    edNomeModelo.getText().toString(),
+                    marca,
+                    edTipoModelo.getText().toString()
+            );
 
-            modelosList.add(modelo);
-            modelosAdapter.notifyDataSetChanged();
+            long id = modelosDAO.updateRecord(modeloSelected.getId(), modelo);
+
+            if (id > 0)
+            {
+                showToast("Modelo atualizado com sucesso!");
+                Log.d("MDL.PUT", "Atualizado com sucesso. ID: "+id);
+
+                modelosList.remove(modeloSelected);
+                modelosList.add(modelo);
+                modelosAdapter.notifyDataSetChanged();
+            }
+            else
+            {
+                showToast("Erro ao atualizar o modelo!");
+                Log.d("MDL.PUT.ERROR", "Erro ao inserir o registro.");
+            }
         }
-        else
+
+        if (modeloSelected.getId() == null)
         {
-            showToast("Erro ao criar um novo modelo!");
-            Log.d("NEW.MDL.ERROR.DB", "Erro ao inserir o registro.");
+            modelo = new Modelo(
+                    marca,
+                    edNomeModelo.getText().toString(),
+                    edTipoModelo.getText().toString()
+            );
+
+            Log.d("NEW.MDL.TESTE", "MODELO: "+modelo.toString());
+
+            long id = modelosDAO.newRecord(modelo);
+            modelosDAO.postRecord(modelo);
+
+            if (id > 0)
+            {
+                showToast("Modelo criado com sucesso!");
+                Log.d("NEW.MDL.INSERT.DB", "Inserido com sucesso. ID: "+id);
+
+                modelosList.add(modelo);
+                modelosAdapter.notifyDataSetChanged();
+            }
+            else
+            {
+                showToast("Erro ao criar um novo modelo!");
+                Log.d("NEW.MDL.ERROR.DB", "Erro ao inserir o registro.");
+            }
         }
 
         limpar(view);
@@ -186,12 +230,20 @@ public class ModelosActivity extends AppCompatActivity
 
     public void alterar(View view)
     {
+        Log.d("ACT.MDL.ALTERAR","Modelo selecionada ID: "+modeloSelected.getId()+" Nome: "+modeloSelected.getNome());
 
+        edNomeModelo.setText(modeloSelected.getNome());
+        edTipoModelo.setText(modeloSelected.getTipo());
+        spinnerMarca.setSelection(spinnerMarcaAdapter.getPosition(modeloSelected.getMarca()));
     }
 
     public void remover(View view)
     {
+        Log.d("ACT.MDL.REMOVE","Modelo selecionado ID: "+modeloSelected.getId()+" Nome: "+modeloSelected.getNome());
 
+        modelosDAO.deleteRecord(modeloSelected);
+        modelosList.remove(modeloSelected);
+        modelosAdapter.notifyDataSetChanged();
     }
 
     public void limpar(View view)

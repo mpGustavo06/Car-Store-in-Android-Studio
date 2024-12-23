@@ -1,5 +1,6 @@
 package com.example.carstore;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ public class CreateAnuncioActivity extends AppCompatActivity
 
     private Anuncio anuncio;
     private AnunciosDAO anunciosDAO;
+    private Anuncio anuncioSelected = new Anuncio();
 
     private Modelo modelo = new Modelo();
     private SpinnerModeloAdapter spinnerModeloAdapter;
@@ -76,6 +78,23 @@ public class CreateAnuncioActivity extends AppCompatActivity
 
         spinnerCidadeAdapter = new SpinnerCidadeAdapter(this, cidadesDao.getCidadesDBList());
         spinnerCidade.setAdapter(spinnerCidadeAdapter);
+
+        Intent intent = getIntent();
+
+        if (intent != null)
+        {
+            anuncioSelected = (Anuncio) intent.getSerializableExtra("anuncioAlterar");
+
+            if (anuncioSelected != null)
+            {
+                editTextAno.setText(String.valueOf(anuncioSelected.getAno()));
+                editTextKm.setText(String.valueOf(anuncioSelected.getKm()));
+                editTextDescricao.setText(anuncioSelected.getDescricao());
+                editTextValor.setText(String.valueOf(anuncioSelected.getValor()));
+                spinnerModelo.setSelection(spinnerModeloAdapter.getPosition(anuncioSelected.getModelo()));
+                spinnerCidade.setSelection(spinnerCidadeAdapter.getPosition(anuncioSelected.getCidade()));
+            }
+        }
 
         //Eventos
         buttonAnunciar.setOnClickListener(new View.OnClickListener()
@@ -141,30 +160,60 @@ public class CreateAnuncioActivity extends AppCompatActivity
 
     public void novoAnuncio(View view)
     {
-        anuncio = new Anuncio(
-            modelo,
-            cidade,
-            editTextDescricao.getText().toString(),
-            Double.parseDouble(editTextValor.getText().toString()),
-            Integer.parseInt(editTextAno.getText().toString()),
-            Integer.parseInt(editTextKm.getText().toString()));
-
-        Log.d("NEW.ANC.TESTE", "ANUNCIO: "+anuncio.toString());
-
-        long id = 0;
-
-        id = anunciosDAO.newRecord(anuncio);
-        anunciosDAO.postRecord(anuncio);
-
-        if (id > 0)
+        if (anuncioSelected.getId() != null)
         {
-            showToast("Anuncio criado com sucesso no BANCO DE DADOS!");
-            Log.d("NEW.ANC.INSERT.DB", "Inserido com sucesso.");
+            anuncio = new Anuncio(
+                    anuncioSelected.getId(),
+                    modelo,
+                    cidade,
+                    editTextDescricao.getText().toString(),
+                    Double.parseDouble(editTextValor.getText().toString()),
+                    Integer.parseInt(editTextAno.getText().toString()),
+                    Integer.parseInt(editTextKm.getText().toString()));
+
+            Log.d("NEW.ANC.TESTE", "ANUNCIO: "+anuncio.toString());
+
+            long id = anunciosDAO.updateRecord(anuncioSelected.getId(), anuncio);
+
+            if (id > 0)
+            {
+                showToast("Anuncio atualizado com sucesso!");
+                Log.d("NEW.ANC.INSERT.DB", "Inserido com sucesso.");
+            }
+            else
+            {
+                showToast("Erro ao atualizar o anuncio!");
+                Log.d("NEW.ANC.ERROR.DB", "Erro ao inserir o registro.");
+            }
         }
-        else
+
+        if (anuncioSelected.getId() == null)
         {
-            showToast("Erro ao criar um novo anuncio no BANDO DE DADOS!");
-            Log.d("NEW.ANC.ERROR.DB", "Erro ao inserir o registro.");
+            anuncio = new Anuncio(
+                    modelo,
+                    cidade,
+                    editTextDescricao.getText().toString(),
+                    Double.parseDouble(editTextValor.getText().toString()),
+                    Integer.parseInt(editTextAno.getText().toString()),
+                    Integer.parseInt(editTextKm.getText().toString()));
+
+            Log.d("NEW.ANC.TESTE", "ANUNCIO: "+anuncio.toString());
+
+            long id = 0;
+
+            id = anunciosDAO.newRecord(anuncio);
+            anunciosDAO.postRecord(anuncio);
+
+            if (id > 0)
+            {
+                showToast("Anuncio criado com sucesso!");
+                Log.d("NEW.ANC.INSERT.DB", "Inserido com sucesso.");
+            }
+            else
+            {
+                showToast("Erro ao criar um novo anuncio!");
+                Log.d("NEW.ANC.ERROR.DB", "Erro ao inserir o registro.");
+            }
         }
 
         limpar();

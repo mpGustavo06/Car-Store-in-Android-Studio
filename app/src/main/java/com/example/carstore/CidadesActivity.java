@@ -3,6 +3,7 @@ package com.example.carstore;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -36,6 +37,7 @@ public class CidadesActivity extends AppCompatActivity
     private Button buttonCadastrar, buttonAlterar, buttonRemover, buttonLimpar;
 
     private Cidade cidade;
+    private Cidade cidadeSelected = new Cidade();
     private CidadesDAO cidadesDAO;
     private CidadesAdapter cidadesAdapter;
     private ArrayList<Cidade> cidadesList = new ArrayList<>();
@@ -80,6 +82,17 @@ public class CidadesActivity extends AppCompatActivity
         getCidadesServerList();
 
         //Eventos
+        cidadesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
+            {
+                view.setActivated(true);
+
+                cidadeSelected = (Cidade) adapterView.getItemAtPosition(position);
+            }
+        });
+
         buttonCadastrar.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -119,28 +132,59 @@ public class CidadesActivity extends AppCompatActivity
 
     public void cadastrar(View view)
     {
-        cidade = new Cidade(
-                edNomeCidade.getText().toString(),
-                edDDD.getText().toString()
-        );
-
-        Log.d("NEW.CDD.TESTE", "CIDADE: "+cidade.toString());
-
-        long id = cidadesDAO.newRecord(cidade);
-        cidadesDAO.postRecord(cidade);
-
-        if (id > 0)
+        if (cidadeSelected.getId() != null)
         {
-            showToast("Cidade criada com sucesso!");
-            Log.d("NEW.CDD.INSERT.DB", "Inserido com sucesso. ID: "+id);
+            cidade = new Cidade(
+                    cidadeSelected.getId(),
+                    edNomeCidade.getText().toString(),
+                    edDDD.getText().toString()
+            );
 
-            cidadesList.add(cidade);
-            cidadesAdapter.notifyDataSetChanged();
+            Log.d("NEW.CDD.TESTE", "CIDADE: " + cidade.toString());
+
+            long id = cidadesDAO.updateRecord(cidadeSelected.getId() ,cidade);
+
+            if (id > 0)
+            {
+                showToast("Cidade atualizada com sucesso!");
+                Log.d("CDD.PUT", "Atualizada com sucesso. ID: " + id);
+
+                cidadesList.remove(cidadeSelected);
+                cidadesList.add(cidade);
+                cidadesAdapter.notifyDataSetChanged();
+            }
+            else
+            {
+                showToast("Erro ao atualizar a cidade!");
+                Log.d("CDD.PUT.ERROR", "Erro ao inserir o registro.");
+            }
         }
-        else
+
+        if (cidadeSelected.getId() == null)
         {
-            showToast("Erro ao criar uma nova cidade!");
-            Log.d("NEW.CDD.ERROR.DB", "Erro ao inserir o registro.");
+            cidade = new Cidade(
+                    edNomeCidade.getText().toString(),
+                    edDDD.getText().toString()
+            );
+
+            Log.d("NEW.CDD.TESTE", "CIDADE: " + cidade.toString());
+
+            long id = cidadesDAO.newRecord(cidade);
+            cidadesDAO.postRecord(cidade);
+
+            if (id > 0)
+            {
+                showToast("Cidade criada com sucesso!");
+                Log.d("NEW.CDD.INSERT.DB", "Inserido com sucesso. ID: " + id);
+
+                cidadesList.add(cidade);
+                cidadesAdapter.notifyDataSetChanged();
+            }
+            else
+            {
+                showToast("Erro ao criar uma nova cidade!");
+                Log.d("NEW.CDD.ERROR.DB", "Erro ao inserir o registro.");
+            }
         }
 
         limpar(view);
@@ -148,12 +192,19 @@ public class CidadesActivity extends AppCompatActivity
 
     public void alterar(View view)
     {
+        Log.d("ACT.CDD.ALTERAR","Marca selecionada ID: "+cidadeSelected.getId()+" Nome: "+cidadeSelected.getNome());
 
+        edNomeCidade.setText(cidadeSelected.getNome());
+        edDDD.setText(cidadeSelected.getDdd());
     }
 
     public void remover(View view)
     {
+        Log.d("ACT.CDD.REMOVE","Cidade selecionada: "+cidadeSelected.getNome());
 
+        cidadesDAO.deleteRecord(cidadeSelected);
+        cidadesList.remove(cidadeSelected);
+        cidadesAdapter.notifyDataSetChanged();
     }
 
     public void limpar(View view)

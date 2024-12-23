@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.carstore.Adapters.AnunciosAdapter;
 import com.example.carstore.Adapters.SpinnerModeloAdapter;
+import com.example.carstore.Control.AnunciosDAO;
 import com.example.carstore.Control.CarStoreAPIService;
 import com.example.carstore.Control.ModelosDAO;
 import com.example.carstore.Models.Anuncio;
@@ -35,9 +36,11 @@ public class AnunciosActivity extends AppCompatActivity
 {
     private EditText edAnoInicial, edAnoFinal, edValorMin, edValorMax;
     private ListView anunciosListView;
-    private Button buttonPesquisar, buttonAnunciar, buttonLimpar;
+    private Button buttonPesquisar, buttonAnunciar, buttonLimpar, buttonAlterar, buttonRemover;
     private Spinner spinnerModelo;
 
+    private Anuncio anuncioSelected = new Anuncio();
+    private AnunciosDAO anunciosDAO;
     private AnunciosAdapter anunciosAdapter;
     private ArrayList<Anuncio> anunciosList = new ArrayList<>();
 
@@ -67,13 +70,16 @@ public class AnunciosActivity extends AppCompatActivity
         apiService = RetrofitUtils.createService(CarStoreAPIService.class);
 
         //Inicialização de ModeloDAO
+        anunciosDAO = new AnunciosDAO(getApplicationContext());
         modelosDao = new ModelosDAO(getApplicationContext());
 
         //Inicialização dos componentes do layout
         anunciosListView = findViewById(R.id.anunciosList);
-        buttonAnunciar = findViewById(R.id.btnAnunciar);
-        buttonPesquisar = findViewById(R.id.btnPesquisar);
-        buttonLimpar = findViewById(R.id.btnLimpar);
+        buttonAnunciar = findViewById(R.id.btnAnuncioAnunciar);
+        buttonPesquisar = findViewById(R.id.btnAnuncioPesquisar);
+        buttonLimpar = findViewById(R.id.btnAnuncioLimpar);
+        buttonAlterar = findViewById(R.id.btnAnuncioAlterar);
+        buttonRemover = findViewById(R.id.btnAnuncioRemover);
         edAnoInicial = findViewById(R.id.editTextFilterAnoInicial);
         edAnoFinal = findViewById(R.id.editTextFilterAnoFinal);
         edValorMin = findViewById(R.id.editTextFilterValorMin);
@@ -92,14 +98,14 @@ public class AnunciosActivity extends AppCompatActivity
         getAnunciosServerList();
 
         //Eventos
-        anunciosListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        anunciosListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id)
             {
-                idEditing = (int) id;
+                view.setActivated(true);
 
-                return false;
+                anuncioSelected = (Anuncio) adapterView.getItemAtPosition(position);
             }
         });
 
@@ -159,12 +165,20 @@ public class AnunciosActivity extends AppCompatActivity
 
     public void remover(View view)
     {
-//        Call<Void> call = apiService.createDeleteAnuncio();
+        Log.d("ACT.ANC.REMOVE","Anuncios selecionado ID: "+anuncioSelected.getId()+" Descrição: "+anuncioSelected.getDescricao());
+
+        anunciosDAO.deleteRecord(anuncioSelected);
+        anunciosList.remove(anuncioSelected);
+        anunciosAdapter.notifyDataSetChanged();
     }
 
     public void alterar(View view)
     {
+        Log.d("ACT.MDL.ALTERAR","Anuncio selecionada ID: "+anuncioSelected.getId()+" Nome: "+anuncioSelected.getDescricao());
 
+        Intent intent = new Intent(AnunciosActivity.this, CreateAnuncioActivity.class);
+        intent.putExtra("anuncioAlterar", anuncioSelected);
+        startActivity(intent);
     }
 
     public void limpar(View view)
