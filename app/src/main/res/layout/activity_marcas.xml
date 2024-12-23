@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fundo_padrao"
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".MarcasActivity">
@@ -25,7 +26,8 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:text="Modelo: "
+            android:textColor="@color/white"
+            android:text="Marca: "
             />
 
         <EditText
@@ -35,6 +37,7 @@
             android:layout_marginRight="10sp"
             android:hint="Toyota"
             android:inputType="text"
+            android:textColor="@color/white"
             android:id="@+id/editTextMrcNome"
             />
 
@@ -69,6 +72,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Marca" />
     </TableRow>
 

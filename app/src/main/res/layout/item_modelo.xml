@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_background"
     android:orientation="vertical">
 
     <TableRow
@@ -16,6 +17,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textSize="15sp"
+            android:textColor="@color/white"
             android:text="Marca" />
 
         <TextView
@@ -25,6 +27,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textSize="15sp"
+            android:textColor="@color/white"
             android:text="Modelo" />
 
         <TextView
@@ -34,6 +37,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textSize="15sp"
+            android:textColor="@color/white"
             android:text="Tipo" />
     </TableRow>
 </LinearLayout>

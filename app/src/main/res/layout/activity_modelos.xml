@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fundo_padrao"
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".ModelosActivity">
@@ -26,6 +27,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Modelo: "
             />
 
@@ -36,6 +38,7 @@
             android:layout_marginRight="5sp"
             android:hint="Voyage"
             android:inputType="text"
+            android:textColor="@color/white"
             android:id="@+id/editTextMdlNome"
             />
 
@@ -48,6 +51,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Tipo: "
             />
 
@@ -57,6 +61,7 @@
             android:minWidth="100sp"
             android:hint="SEDAN"
             android:inputType="text"
+            android:textColor="@color/white"
             android:id="@+id/editTextMdlTipo"
             />
     </TableRow>
@@ -79,6 +84,7 @@
             android:layout_marginRight="5sp"
             android:text="Marca: "
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:textSize="18sp"
             />
 
@@ -125,6 +131,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Modelo" />
 
         <TextView
@@ -134,6 +141,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Marca" />
 
         <TextView
@@ -143,6 +151,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Tipo" />
     </TableRow>
 

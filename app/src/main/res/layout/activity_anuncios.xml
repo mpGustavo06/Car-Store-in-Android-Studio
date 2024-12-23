@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fundo_padrao"
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".AnunciosActivity">
@@ -27,6 +28,7 @@
                 android:gravity="center"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/white"
                 android:text="Ano Inicial: "
                 />
 
@@ -37,6 +39,7 @@
                 android:layout_marginRight="5sp"
                 android:hint="2015"
                 android:inputType="number"
+                android:textColor="@color/white"
                 android:id="@+id/editTextFilterAnoInicial"
                 />
 
@@ -49,6 +52,7 @@
                 android:gravity="center"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/white"
                 android:text="Ano Final: "
                 />
 
@@ -58,6 +62,7 @@
                 android:minWidth="100sp"
                 android:hint="2020"
                 android:inputType="number"
+                android:textColor="@color/white"
                 android:id="@+id/editTextFilterAnoFinal"
                 />
         </TableRow>
@@ -76,6 +81,7 @@
                 android:gravity="center"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/white"
                 android:text="Valor Minimo: "
                 />
 
@@ -86,6 +92,7 @@
                 android:layout_marginRight="5sp"
                 android:hint="19500"
                 android:inputType="numberDecimal"
+                android:textColor="@color/white"
                 android:id="@+id/editTextFilterValorMin"
                 />
 
@@ -98,6 +105,7 @@
                 android:gravity="center"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/white"
                 android:text="Valor Maximo: "
                 />
 
@@ -107,6 +115,7 @@
                 android:minWidth="90sp"
                 android:hint="50000"
                 android:inputType="numberDecimal"
+                android:textColor="@color/white"
                 android:id="@+id/editTextFilterValorMax"
                 />
         </TableRow>
@@ -129,6 +138,7 @@
             android:layout_marginRight="5sp"
             android:text="Modelo: "
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:textSize="18sp"
             />
 
@@ -154,7 +164,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/btnLimpar"
+            android:id="@+id/btnAnuncioLimpar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="30sp"
@@ -164,7 +174,7 @@
             />
 
         <Button
-            android:id="@+id/btnPesquisar"
+            android:id="@+id/btnAnuncioPesquisar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30sp"
@@ -195,6 +205,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Veículo" />
 
         <TextView
@@ -204,6 +215,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Ano" />
 
         <TextView
@@ -213,6 +225,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Km" />
 
         <TextView
@@ -222,6 +235,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Valor" />
     </TableRow>
 
@@ -247,7 +261,7 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/btnRemover"
+            android:id="@+id/btnAnuncioRemover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="remover"
@@ -256,7 +270,7 @@
             />
 
         <Button
-            android:id="@+id/btnAlterar"
+            android:id="@+id/btnAnuncioAlterar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20sp"
@@ -267,7 +281,7 @@
             />
 
         <Button
-            android:id="@+id/btnAnunciar"
+            android:id="@+id/btnAnuncioAnunciar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="anunciar"

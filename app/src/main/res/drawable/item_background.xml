@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cor de fundo quando selecionado -->
+    <item android:state_pressed="true" android:drawable="@color/fundo_selecionado" />
+    <item android:state_activated="true" android:drawable="@color/fundo_selecionado" />
+    <!-- Cor de fundo padrão -->
+    <item android:drawable="@color/fundo_padrao" />
+</selector>

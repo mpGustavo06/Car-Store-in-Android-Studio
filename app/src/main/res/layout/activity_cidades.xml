@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fundo_padrao"
     android:orientation="vertical"
     android:gravity="center"
     tools:context=".CidadesActivity">
@@ -25,6 +26,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Cidade: "
             />
 
@@ -35,6 +37,7 @@
             android:layout_marginRight="10sp"
             android:hint="Toledo"
             android:inputType="text"
+            android:textColor="@color/white"
             android:id="@+id/editTextCddNome"
             />
 
@@ -46,6 +49,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="DDD: "
             />
 
@@ -55,6 +59,7 @@
             android:minWidth="100sp"
             android:hint="45"
             android:inputType="text"
+            android:textColor="@color/white"
             android:id="@+id/editTextCddDdd"
             />
     </TableRow>
@@ -91,6 +96,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="Marca" />
 
         <TextView
@@ -100,6 +106,7 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="DDD" />
     </TableRow>
 

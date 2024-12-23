@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/item_background"
     android:orientation="vertical">
 
     <TableRow
@@ -15,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:textColor="@color/white"
             android:textSize="15sp"
             android:text="Marca" />
     </TableRow>
