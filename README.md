@@ -1,4 +1,4 @@
-## Sobre o Aplicativo
+## About the Application
 
 <br>
 
