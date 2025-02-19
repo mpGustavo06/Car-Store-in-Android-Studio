@@ -69,9 +69,14 @@ This repository contains the source code of an Android application designed to m
 ## How to Use
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mpGustavo06/Commercial-Visit-in-Android-Studio.git
+   git clone https://github.com/mpGustavo06/Car-Store-in-Android-Studio.git
    
 2. Open the project in Android Studio.
 
 3. Run the app on an emulator or physical device.
 
+## Project Structure
+- **Models**: Entity classes such as Brand, Model, City, and Listing.
+- **Services**: Integration with web services for CRUD operations.
+- **Adapters**: Adapters for displaying lists (e.g., models, listings).
+- **Activities**: App screens, such as the main screen, brand registration, model registration, city registration, and listing registration.
