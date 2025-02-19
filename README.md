@@ -1,21 +1,77 @@
-## About the Application
+# Vehicle Listing Management App
 
-<br>
+This repository contains the source code of an Android application designed to manage vehicle brands, models, cities, and sale listings. The app uses web services available at the URL `http://argo.td.utfpr.edu.br/carros/ws/<resource>` to perform operations such as registration, querying, updating, and deleting data.
 
-This application was developed to simplify the management and search of vehicle sales. By integrating with web services, it offers an efficient way to handle data such as vehicle brands, models, cities, and advertisements.
+## Key Features
 
-The app allows users to:
+### 1. **Record Maintenance**
+   - **Brands**: Registration and management of vehicle brands.
+   - **Models**: Registration and management of vehicle models, linked to brands.
+   - **Cities**: Registration and management of cities.
+   - **Listings**: Registration and management of vehicle sale listings, linked to models and cities.
 
-### Manage Data
+### 2. **Search for Vehicle Listings**
+   - Filter listings by **model**, **year**, and **price**.
+   - Optional parameters for advanced search:
+     - `model`: Filters by a specific model.
+     - `ano_inicial` and `ano_final`: Filters by a range of years.
+     - `min` and `max`: Filters by a price range.
 
-Add, update, and delete records for vehicle brands, models, cities, and sales advertisements.
+### 3. **Web Service Integration**
+   - **POST**: Insertion of new records (brands, models, cities, listings) without needing to provide an ID, as the server generates it automatically.
+   - **PUT**: Updating existing records while keeping the original ID.
+   - **DELETE**: Deleting records.
+   - **GET**: Querying records with custom filters (e.g., models by brand, cities by name, listings by model/year/price).
 
-### Search Vehicles
+## Server-Side Class Structure
+- **Brand**:
+  ```json
+  {
+    "id": Long,
+    "nome": String
+  }
 
-Quickly find vehicles based on model, year, and price, using optional filters to refine the results.
+- **Model**:
+  ```json
+  {
+    "id": Long,
+    "nome": String,
+    "idMarca": Long,
+    "marca": Brand
+  }
 
-### Key Features
+- **City**:
+  ```json
+  {
+    "id": Long,
+    "nome": String,
+    "ddd": String
+  }
 
-- Dynamic Layouts: Adapts the interface for portrait and landscape modes.
-- Offline Notification: Alerts users if the app cannot connect to the internet, highlighting the need for an active connection.
-- Intuitive API Integration: The app uses easy-to-understand JSON requests and supports operations such as advertisements, adding, updating, and deleting records.
+- **Listing**:
+  ```json
+  {
+    "id": Long,
+    "modelo": Model,
+    "cidade": City,
+    "descricao": String,
+    "valor": Double,
+    "ano": Integer,
+    "km": Integer,
+    "idCidade": Long,
+    "idModelo": Long
+  }
+
+## App Requirements
+- **Responsive Layouts**: Different layouts for devices in portrait or landscape orientation.
+- **Connection Check**: Upon launching the app, it checks for an internet connection. If there is no connection, it displays a warning that the app cannot be used offline.
+
+## How to Use
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/mpGustavo06/Commercial-Visit-in-Android-Studio.git
+   
+2. Open the project in Android Studio.
+
+3. Run the app on an emulator or physical device.
+
